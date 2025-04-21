@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+// use Rules\Password;
 use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -9,36 +10,32 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Password;
 use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Validator;
+// Add these at the top of AuthController.php
+use Tymon\JWTAuth\Facades\JWTAuth;  // For JWT authentication
+use Google_Client;  // For Google OAuth
+use GuzzleHttp\Client as GuzzleClient;  // For HTTP requests
+use Illuminate\Support\Facades\Password;  // For password reset
+
 
 class AuthController extends Controller
 
 
 {
-    public function __construct()
-    {
-        $this->middleware('auth:api', ['except' => [
-            'login', 
-            'register', 
-            'verifyEmail', 
-            'forgotPassword', 
-            'resetPassword',
-            'redirectToProvider',
-            'handleProviderCallback'
-        ]]);
-    }
+   
     // Register a new user
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'first_name' => 'required|string|max:100',
-            'last_name' => 'required|string|max:100',
+            'first_name' => 'nullable|string|max:100',
+            'last_name' => 'nullable|string|max:100',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
+            'phone' => 'nullable|string|max:20',
             'role' => 'required|in:client,vendor,admin',
+            // profile in we're gonna add it in update
         ]);
 
         if ($validator->fails()) {
@@ -51,11 +48,12 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role,
+            'phone' => $request->phone,
         ]);
 
         event(new Registered($user));
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $token = JWTAuth::fromUser($user);
 
         return response()->json([
             'message' => 'User registered successfully. Please check your email to verify your account.',
@@ -96,7 +94,7 @@ class AuthController extends Controller
         $user->last_login_at = now();
         $user->save();
 
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $token = JWTAuth::fromUser($user);
 
         return response()->json([
             'message' => 'Login successful',
@@ -107,21 +105,23 @@ class AuthController extends Controller
     }
 
     // Logout user
+
     public function logout(Request $request)
-    {
-        // Get the authenticated user
-        $user = $request->user();
+{
+    try {
+        auth()->logout(); // Proper JWT invalidation
         
-        // Update is_active to false
-        $user->update(['is_active' => false]);
-        
-        // Revoke the current access token
-        $request->user()->currentAccessToken()->delete();
-    
         return response()->json([
             'message' => 'Logged out successfully'
         ]);
+        
+    } catch (\Exception $e) {
+        return response()->json([
+            'message' => 'Failed to logout',
+            'error' => $e->getMessage()
+        ], 500);
     }
+}
     // Get authenticated user
     public function me(Request $request)
     {

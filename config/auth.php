@@ -13,11 +13,10 @@ return [
     |
     */
 
-    'defaults' => [
-        'guard' => env('AUTH_GUARD', 'web'),
-        'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
-    ],
-
+'defaults' => [
+    'guard' => 'api',  // Make sure this is set to 'api'
+    'passwords' => 'users',
+],
     /*
     |--------------------------------------------------------------------------
     | Authentication Guards
@@ -36,6 +35,10 @@ return [
     */
 
     'guards' => [
+        'api' => [
+            'driver' => 'jwt',  // Must be 'jwt' not 'sanctum'
+            'provider' => 'users',
+        ],
         'web' => [
             'driver' => 'session',
             'provider' => 'users',

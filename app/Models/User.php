@@ -46,17 +46,17 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         'reset_token_expires_at' => 'datetime',
         'last_login_at' => 'datetime'
     ];
+    
+   
 
-    // JWT Implementation
-    public function getJWTIdentifier()
-    {
+    public function getJWTIdentifier() {
         return $this->getKey();
     }
 
-    public function getJWTCustomClaims()
-    {
+    public function getJWTCustomClaims() {
         return [];
     }
+   
 
     // Relationships
     public function client()

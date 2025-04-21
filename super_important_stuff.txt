@@ -1,0 +1,11 @@
+21/04:
+
+composer require tymon/jwt-auth
+composer require laravel/socialite
+php artisan vendor:publish --provider="Tymon\JWTAuth\Providers\LaravelServiceProvider"
+php artisan jwt:secret
+
+
+//IF THE FILE api.php IS NOT CREATED
+php artisan install:api
+
