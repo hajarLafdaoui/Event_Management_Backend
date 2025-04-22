@@ -7,10 +7,11 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Laravel\Sanctum\HasApiTokens;
 class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 {
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, SoftDeletes, HasApiTokens;
 
     protected $fillable = [
         'email',
@@ -55,8 +56,28 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 
     public function getJWTCustomClaims()
     {
-        return [];
+        return [
+            'role' => $this->role,
+            'email' => $this->email,
+            'name' => $this->getFullNameAttribute()
+        ];
     }
+
+    public function events()
+    {
+        return $this->hasMany(Event::class, 'user_id');
+    }
+
+    public function createdEventTypes()
+    {
+        return $this->hasMany(EventType::class, 'created_by_admin_id');
+    }
+
+    public function createdTemplates()
+    {
+        return $this->hasMany(EventTemplate::class, 'created_by_admin_id');
+    }
+
 
     // Relationships
     public function client()
