@@ -44,10 +44,8 @@ Route::prefix('auth')->group(function () {    // Basic Authentication
 });
 
 
-// // Temporary route for testing
-// Route::get('/test-email', function() {
-//     \Mail::raw('Test email', function($message) {
-//         $message->to('hajarlafdaoui@email.com')->subject('Test');
-//     });
-//     return 'Email sent';
-// });
+use OpenAI\Laravel\Facades\OpenAI;
+
+Route::get('/user', function (Request $request) {
+    return $request->user();
+})->middleware('auth:sanctum');

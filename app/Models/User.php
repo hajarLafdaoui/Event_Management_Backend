@@ -9,11 +9,12 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
+
+use Illuminate\Database\Eloquent\SoftDeletes;
 class User extends Authenticatable implements JWTSubject, MustVerifyEmail
 {
-    use HasFactory, Notifiable, HasApiTokens;
+    use HasFactory, Notifiable, SoftDeletes, HasApiTokens;
 
-    
 
     protected $fillable = [
         'email',
@@ -61,10 +62,34 @@ public function sendEmailVerificationNotification()
         return $this->getKey();
     }
 
-    public function getJWTCustomClaims() {
-        return [];
+    // public function getJWTCustomClaims() {
+    //     return [];
+    // }
+    public function getJWTCustomClaims()
+    {
+        return [
+            'role' => $this->role,
+            'email' => $this->email,
+            'name' => $this->getFullNameAttribute()
+        ];
     }
    
+
+    public function events()
+    {
+        return $this->hasMany(Event::class, 'user_id');
+    }
+
+    public function createdEventTypes()
+    {
+        return $this->hasMany(EventType::class, 'created_by_admin_id');
+    }
+
+    public function createdTemplates()
+    {
+        return $this->hasMany(EventTemplate::class, 'created_by_admin_id');
+    }
+
 
     // Relationships
     public function client()

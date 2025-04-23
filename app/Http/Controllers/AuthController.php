@@ -28,7 +28,7 @@ class AuthController extends Controller
 
 {
    
-    // Register a new user
+    // Register 
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -38,7 +38,6 @@ class AuthController extends Controller
             'password' => 'required|string|min:8|confirmed',
             'phone' => 'nullable|string|max:20',
             'role' => 'required|in:client,vendor,admin',
-            // profile in we're gonna add it in update
         ]);
 
         if ($validator->fails()) {
@@ -66,7 +65,47 @@ class AuthController extends Controller
         ], 201);
     }
 
-    // Login user
+    // VERIFY EMAIL  AFTER REGISTRATION
+    public function verifyEmail(Request $request, $id, $hash)
+    {
+        // Find the user first
+        $user = User::find($id);
+        
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+    
+        // Verify the hash matches
+        if (!hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
+            return response()->json(['message' => 'Invalid verification link'], 403);
+        }
+    
+        if ($user->hasVerifiedEmail()) {
+            return response()->json(['message' => 'Email already verified']);
+        }
+    
+        $user->markEmailAsVerified();
+    
+        return response()->json(['message' => 'Email verified successfully']);
+    }
+    public function resendVerificationEmail(Request $request)
+    {
+        $user = $request->user();
+        
+        if (!$user) {
+            return response()->json(['message' => 'Not authenticated'], 401);
+        }
+    
+        if ($user->hasVerifiedEmail()) {
+            return response()->json(['message' => 'Email already verified']);
+        }
+    
+        $user->sendEmailVerificationNotification();
+    
+        return response()->json(['message' => 'Verification link sent']);
+    }
+   
+    // Login 
     public function login(Request $request)
     {
         $credentials = $request->validate([
@@ -107,48 +146,8 @@ class AuthController extends Controller
         ]);
     }
 
-    public function verifyEmail(Request $request, $id, $hash)
-    {
-        // Find the user first
-        $user = User::find($id);
-        
-        if (!$user) {
-            return response()->json(['message' => 'User not found'], 404);
-        }
-    
-        // Verify the hash matches
-        if (!hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
-            return response()->json(['message' => 'Invalid verification link'], 403);
-        }
-    
-        if ($user->hasVerifiedEmail()) {
-            return response()->json(['message' => 'Email already verified']);
-        }
-    
-        $user->markEmailAsVerified();
-    
-        return response()->json(['message' => 'Email verified successfully']);
-    }
-
-    public function resendVerificationEmail(Request $request)
-    {
-        $user = $request->user();
-        
-        if (!$user) {
-            return response()->json(['message' => 'Not authenticated'], 401);
-        }
-    
-        if ($user->hasVerifiedEmail()) {
-            return response()->json(['message' => 'Email already verified']);
-        }
-    
-        $user->sendEmailVerificationNotification();
-    
-        return response()->json(['message' => 'Verification link sent']);
-    }
-
-    // Logout user
-
+ 
+    // Logout 
     public function logout(Request $request)
 {
     try {
@@ -165,6 +164,7 @@ class AuthController extends Controller
         ], 500);
     }
 }
+
     // Get authenticated user
     public function me(Request $request)
     {
@@ -236,21 +236,21 @@ class AuthController extends Controller
     {
         $request->validate([
             'current_password' => 'required',
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'password' => 'required|min:8|confirmed',
         ]);
-
+    
         $user = $request->user();
-
+    
         if (!Hash::check($request->current_password, $user->password)) {
             return response()->json([
                 'message' => 'Current password is incorrect'
-            ], 422);
+            ], 422); // HTTP 422 = Unprocessable Entity
         }
-
+    
         $user->update([
             'password' => Hash::make($request->password)
         ]);
-
+    
         return response()->json([
             'message' => 'Password updated successfully'
         ]);
