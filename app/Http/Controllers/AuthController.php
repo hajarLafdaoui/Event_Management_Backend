@@ -18,6 +18,9 @@ use Tymon\JWTAuth\Facades\JWTAuth;  // For JWT authentication
 use Google_Client;  // For Google OAuth
 use GuzzleHttp\Client as GuzzleClient;  // For HTTP requests
 use Illuminate\Support\Facades\Password;  // For password reset
+// use Illuminate\Validation\Rules\Password;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+
 
 
 class AuthController extends Controller
@@ -102,6 +105,46 @@ class AuthController extends Controller
             'token_type' => 'Bearer',
             'user' => $user
         ]);
+    }
+
+    public function verifyEmail(Request $request, $id, $hash)
+    {
+        // Find the user first
+        $user = User::find($id);
+        
+        if (!$user) {
+            return response()->json(['message' => 'User not found'], 404);
+        }
+    
+        // Verify the hash matches
+        if (!hash_equals((string) $hash, sha1($user->getEmailForVerification()))) {
+            return response()->json(['message' => 'Invalid verification link'], 403);
+        }
+    
+        if ($user->hasVerifiedEmail()) {
+            return response()->json(['message' => 'Email already verified']);
+        }
+    
+        $user->markEmailAsVerified();
+    
+        return response()->json(['message' => 'Email verified successfully']);
+    }
+
+    public function resendVerificationEmail(Request $request)
+    {
+        $user = $request->user();
+        
+        if (!$user) {
+            return response()->json(['message' => 'Not authenticated'], 401);
+        }
+    
+        if ($user->hasVerifiedEmail()) {
+            return response()->json(['message' => 'Email already verified']);
+        }
+    
+        $user->sendEmailVerificationNotification();
+    
+        return response()->json(['message' => 'Verification link sent']);
     }
 
     // Logout user

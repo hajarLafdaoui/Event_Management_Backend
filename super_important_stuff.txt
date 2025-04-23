@@ -9,3 +9,12 @@ php artisan jwt:secret
 //IF THE FILE api.php IS NOT CREATED
 php artisan install:api
 
+
+23/04
+//EMAIL VERIFICATION
+php artisan tinker
+php artisan vendor:publish --tag=laravel-notifications
+php artisan make:notification VerifyEmail
+php artisan queue:work --once -v
+php -v
+php artisan queue:listen

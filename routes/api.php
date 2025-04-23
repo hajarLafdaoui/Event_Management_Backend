@@ -26,4 +26,28 @@ Route::prefix('auth')->group(function () {    // Basic Authentication
     // Google/Facebook specific (if needed)
     Route::post('/google/callback', [AuthController::class, 'handleGoogleCallback']);
     Route::post('/facebook/callback', [AuthController::class, 'handleFacebookCallback']);
+     // Email Verification Routes
+     Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])
+     ->name('verification.verify');
+     
+ Route::post('/email/verification-notification', [AuthController::class, 'resendVerificationEmail']);
+ Route::get('/test-mail', function() {
+    try {
+        \Mail::raw('Test email', function($message) {
+            $message->to('test@example.com')->subject('Test');
+        });
+        return 'Email sent';
+    } catch (\Exception $e) {
+        return 'Error: '.$e->getMessage();
+    }
 });
+});
+
+
+// // Temporary route for testing
+// Route::get('/test-email', function() {
+//     \Mail::raw('Test email', function($message) {
+//         $message->to('hajarlafdaoui@email.com')->subject('Test');
+//     });
+//     return 'Email sent';
+// });
