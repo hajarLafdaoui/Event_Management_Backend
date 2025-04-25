@@ -16,12 +16,20 @@ Route::prefix('auth')->group(function () {    // Basic Authentication
     Route::put('/password', [AuthController::class, 'updatePassword'])->middleware('auth:api');
     
     // Password Reset
-    Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
-    Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+//     Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+// Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+
+// Password Reset Routes
+Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])
+    ->name('password.email');
+
+Route::post('/reset-password', [AuthController::class, 'resetPassword'])
+    ->name('password.update');
     
     // Social Authentication
     Route::get('/social/{provider}', [AuthController::class, 'redirectToProvider']);
     Route::get('/social/{provider}/callback', [AuthController::class, 'handleProviderCallback']);
+
     
     // Google/Facebook specific (if needed)
     Route::post('/google/callback', [AuthController::class, 'handleGoogleCallback']);

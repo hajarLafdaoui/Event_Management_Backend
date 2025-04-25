@@ -256,48 +256,63 @@ class AuthController extends Controller
         ]);
     }
 
-    // Forgot password
-    public function forgotPassword(Request $request)
-    {
-        $request->validate(['email' => 'required|email']);
+  // Forgot password
+public function forgotPassword(Request $request)
+{
+    $request->validate(['email' => 'required|email|exists:users,email']);
+    
+    // We will send the password reset link to this user. Once we have attempted
+    // to send the link, we will examine the response then see the message we
+    // need to show to the user. Finally, we'll send out a proper response.
+    $status = Password::sendResetLink(
+        $request->only('email')
+    );
 
-        $status = Password::sendResetLink(
-            $request->only('email')
-        );
+    return $status === Password::RESET_LINK_SENT
+        ? response()->json([
+            'status' => __($status),
+            'message' => 'Password reset link sent to your email'
+        ])
+        : response()->json([
+            'email' => __($status),
+            'message' => 'Unable to send password reset link'
+        ], 400);
+}
+public function resetPassword(Request $request)
+{
+    $request->validate([
+        'token' => 'required',
+        'email' => 'required|email',
+        'password' => 'required|min:8|confirmed',
+    ]);
 
-        return $status === Password::RESET_LINK_SENT
-            ? response()->json(['message' => __($status)])
-            : response()->json(['message' => __($status)], 400);
+    // Find user by email and token
+    $user = User::where('email', $request->email)
+                ->where('reset_token', $request->token)
+                ->where('reset_token_expires_at', '>', now())
+                ->first();
+
+    if (!$user) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Invalid or expired reset token'
+        ], 400);
     }
 
-    // Reset password
-    public function resetPassword(Request $request)
-    {
-        $request->validate([
-            'token' => 'required',
-            'email' => 'required|email',
-            'password' => 'required|min:8|confirmed',
-        ]);
+    // Update password and clear token
+    $user->update([
+        'password' => Hash::make($request->password),
+        'reset_token' => null,
+        'reset_token_expires_at' => null
+    ]);
 
-        $status = Password::reset(
-            $request->only('email', 'password', 'password_confirmation', 'token'),
-            function ($user, $password) {
-                $user->forceFill([
-                    'password' => Hash::make($password)
-                ])->setRememberToken(Str::random(60));
+    event(new PasswordReset($user));
 
-                $user->save();
-
-                event(new PasswordReset($user));
-            }
-        );
-
-        return $status === Password::PASSWORD_RESET
-            ? response()->json(['message' => __($status)])
-            : response()->json(['message' => __($status)], 400);
-    }
-
-    public function handleGoogleCallback(Request $request)
+    return response()->json([
+        'success' => true,
+        'message' => 'Password reset successfully'
+    ]);
+}    public function handleGoogleCallback(Request $request)
     {
         $googleToken = $request->input('token');
         

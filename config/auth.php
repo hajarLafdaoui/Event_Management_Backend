@@ -93,15 +93,14 @@ return [
     |
     */
 
-    'passwords' => [
-        'users' => [
-            'provider' => 'users',
-            'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
-            'expire' => 60,
-            'throttle' => 60,
-        ],
+  'passwords' => [
+    'users' => [
+        'provider' => 'users',
+        'table' => 'password_reset_tokens', // Make sure this matches your table name
+        'expire' => 60, // Token expiration in minutes
+        'throttle' => 60, // Seconds between requests
     ],
-
+],
     /*
     |--------------------------------------------------------------------------
     | Password Confirmation Timeout
