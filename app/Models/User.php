@@ -89,6 +89,15 @@ public function sendEmailVerificationNotification()
     {
         return $this->hasMany(EventTemplate::class, 'created_by_admin_id');
     }
+    public function assignedTasks()
+    {
+        return $this->hasMany(EventTask::class, 'user_id');
+    }
+
+    public function createdTaskTemplates()
+    {
+        return $this->hasMany(TaskTemplate::class, 'created_by_admin_id');
+    }
 
 
     // Relationships

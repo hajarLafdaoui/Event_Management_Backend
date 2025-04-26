@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-
+use OpenAI\Laravel\Facades\OpenAI;
 
 Route::prefix('auth')->group(function () {    // Basic Authentication
     Route::post('/register', [AuthController::class, 'register']);
@@ -42,10 +42,3 @@ Route::prefix('auth')->group(function () {    // Basic Authentication
     }
 });
 });
-
-
-use OpenAI\Laravel\Facades\OpenAI;
-
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');

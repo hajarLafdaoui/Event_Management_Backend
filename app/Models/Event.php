@@ -53,4 +53,9 @@ class Event extends Model
     {
         return $this->belongsTo(EventTemplate::class, 'template_id');
     }
+    public function tasks()
+    {
+        return $this->hasMany(EventTask::class, 'event_id');
+    }
+    
 }
