@@ -10,7 +10,7 @@ return new class extends Migration
     {
         Schema::create('task_templates', function (Blueprint $table) {
             $table->id('task_template_id');
-            $table->foreignId('event_type_id')->constrained('event_types');
+            $table->unsignedBigInteger('event_type_id');
             $table->unsignedBigInteger('created_by_admin_id')->nullable();
             $table->string('template_name');
             $table->string('task_name');
@@ -25,6 +25,10 @@ return new class extends Migration
                   ->references('id')
                   ->on('users')
                   ->onDelete('set null');
+                  
+            $table->foreign('event_type_id')
+                  ->references('event_type_id')
+                  ->on('event_types');
         });
     }
 

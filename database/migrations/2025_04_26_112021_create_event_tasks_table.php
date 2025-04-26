@@ -10,13 +10,12 @@ return new class extends Migration
     {
         Schema::create('event_tasks', function (Blueprint $table) {
             $table->id('task_id');
-            $table->foreignId('event_id')->constrained('events')->cascadeOnDelete();
-            $table->foreignId('user_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('template_id')->nullable()->constrained('task_templates')->nullOnDelete();
+            $table->unsignedBigInteger('event_id');
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('template_id')->nullable();
             $table->string('task_name');
             $table->text('task_description')->nullable();
             $table->enum('assigned_to', ['client', 'vendor', 'none'])->default('none');
-            $table->foreignId('assigned_vendor_id')->nullable()->constrained('vendors');
             $table->date('due_date')->nullable();
             $table->dateTime('due_datetime')->nullable();
             $table->dateTime('completed_at')->nullable();
@@ -24,6 +23,22 @@ return new class extends Migration
             $table->enum('priority', ['low', 'medium', 'high'])->default('medium');
             $table->integer('progress_percentage')->default(0);
             $table->timestamps();
+
+            // Foreign key constraints
+            $table->foreign('event_id')
+                    ->references('event_id')
+                    ->on('events')
+                    ->onDelete('cascade');
+
+            $table->foreign('user_id')
+                    ->references('id')
+                    ->on('users')
+                    ->onDelete('cascade');
+                    
+            $table->foreign('template_id')
+                    ->references('task_template_id')
+                    ->on('task_templates')
+                    ->onDelete('set null');
         });
     }
 
