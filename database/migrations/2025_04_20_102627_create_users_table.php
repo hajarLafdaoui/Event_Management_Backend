@@ -20,14 +20,22 @@ return new class extends Migration
             $table->string('profile_picture')->nullable();
             $table->string('phone')->nullable();
             $table->enum('role', ['client', 'vendor', 'admin'])->default('client');
+
+            // email verification
+            // $table->timestamp('email_verified_at')->nullable()->after('email');
             $table->boolean('is_email_verified')->default(false);
             $table->string('email_verification_token')->nullable();
             $table->timestamp('email_verification_token_expires_at')->nullable();
+
+            // reset password
             $table->string('reset_token')->nullable();
             $table->timestamp('reset_token_expires_at')->nullable();
-            $table->timestamp('last_login_at')->nullable();
+
+            // social login
             $table->enum('login_provider', ['local', 'google', 'facebook'])->default('local');
             $table->string('provider_id')->nullable();
+
+            $table->timestamp('last_login_at')->nullable();
             $table->boolean('is_active')->default(true);
             $table->softDeletes();
 

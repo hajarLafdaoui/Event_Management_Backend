@@ -8,8 +8,6 @@ use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Notifications\ResetPasswordNotification;
-
-
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 
@@ -52,31 +50,27 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         'reset_token_expires_at' => 'datetime',
         'last_login_at' => 'datetime'
     ];
-    
-    // In User model
-public function sendEmailVerificationNotification()
-{
-    $this->notify(new \App\Notifications\VerifyEmail); // or \Illuminate\Auth\Notifications\VerifyEmail
-}
 
-public function sendPasswordResetNotification($token)
-{
-    // Store the token in your custom reset_token column
-    $this->update([
-        'reset_token' => $token,
-        'reset_token_expires_at' => now()->addMinutes(config('auth.passwords.users.expire'))
-    ]);
     
-    // Send notification with the token
-    $this->notify(new ResetPasswordNotification($token));
-}
+    
+    public function sendEmailVerificationNotification()
+    {
+        $this->notify(new \App\Notifications\VerifyEmail); 
+    }
+
+    public function sendPasswordResetNotification($token)
+    {
+        $this->update([
+            'reset_token' => $token,
+            'reset_token_expires_at' => now()->addMinutes(config('auth.passwords.users.expire'))
+        ]);
+        $this->notify(new ResetPasswordNotification($token));
+    }
+
     public function getJWTIdentifier() {
         return $this->getKey();
     }
 
-    // public function getJWTCustomClaims() {
-    //     return [];
-    // }
     public function getJWTCustomClaims()
     {
         return [
@@ -101,8 +95,7 @@ public function sendPasswordResetNotification($token)
     {
         return $this->hasMany(EventTemplate::class, 'created_by_admin_id');
     }
-
-
+    
     // Relationships
     public function client()
     {
