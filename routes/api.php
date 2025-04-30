@@ -42,3 +42,36 @@ Route::prefix('auth')->group(function () {    // Basic Authentication
     }
 });
 });
+
+// Event Types Routes
+Route::prefix('event-types')->middleware('auth:api')->group(function () {
+    Route::get('/', [EventTypeController::class, 'index']);
+    Route::post('/', [EventTypeController::class, 'store'])->middleware('role:admin');
+    Route::put('/{eventType}', [EventTypeController::class, 'update'])->middleware('role:admin');
+    Route::delete('/{eventType}', [EventTypeController::class, 'destroy'])->middleware('role:admin');
+});
+
+// Event Templates Routes
+Route::prefix('event-templates')->middleware('auth:api')->group(function () {
+    Route::get('/', [EventTemplateController::class, 'index']);
+    Route::post('/', [EventTemplateController::class, 'store'])->middleware('role:admin');
+    Route::get('/{template}', [EventTemplateController::class, 'show']);
+    Route::put('/{template}', [EventTemplateController::class, 'update'])->middleware('role:admin');
+    Route::delete('/{template}', [EventTemplateController::class, 'destroy'])->middleware('role:admin');
+    
+    // AI Generation Route
+    Route::post('/generate-with-ai', [EventTemplateController::class, 'generateWithAI'])->middleware('role:admin');
+});
+
+// Events Routes
+Route::prefix('events')->middleware('auth:api')->group(function () {
+    Route::get('/', [EventController::class, 'index']);
+    Route::post('/', [EventController::class, 'store']);
+    Route::get('/{event}', [EventController::class, 'show']);
+    Route::put('/{event}', [EventController::class, 'update']);
+    Route::delete('/{event}', [EventController::class, 'destroy']);
+    
+    // Template and AI Generation Routes
+    Route::post('/generate-from-template/{template}', [EventController::class, 'generateFromTemplate']);
+    Route::post('/generate-with-ai', [EventController::class, 'generateWithAI']);
+});
