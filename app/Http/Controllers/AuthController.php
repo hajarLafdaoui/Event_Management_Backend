@@ -343,141 +343,155 @@ public function handleGoogleCallback(Request $request)
         return response()->json(['error' => 'Invalid token'], 400);
     }
 }
-        public function handleFacebookCallback(Request $request)
-        {
-            $accessToken = $request->input('accessToken'); 
-        
-            if (!$accessToken) {
-                return response()->json(['error' => 'Access token not provided.'], 400);
-            }
-        
-            try {
-                $facebookUser = Socialite::driver('facebook')
-                    ->setHttpClient(new \GuzzleHttp\Client(['verify' => false]))
-                    ->stateless()
-                    ->userFromToken($accessToken);
-        
-                if (!$facebookUser) {
-                    return response()->json(['error' => 'Failed to retrieve user from Facebook.'], 400);
-                }
-        
-                $user = User::firstOrCreate(
-                    ['email' => $facebookUser->email],
-                    [
-                        'name' => $facebookUser->name,
-                        'facebook_id' => $facebookUser->id,
-                        'password' => bcrypt('dummyPassword'),
-    
-                    ]
-                );
-        
-                $token = JWTAuth::fromUser($user);
-        
-                return response()->json([
-                    'message' => 'Login successful!',
-                    'user' => $user,
-                    'token' => $token,
-                ]);
-            } catch (\Exception $e) {
-                \Log::error('Facebook Authentication Error: ' . $e->getMessage());
-                return response()->json(['error' => 'Failed to authenticate user.'], 500);
-            }
+
+public function handleFacebookCallback(Request $request)
+{
+    $accessToken = $request->input('accessToken');
+
+    if (!$accessToken) {
+        return response()->json(['error' => 'Access token not provided.'], 400);
+    }
+
+    try {
+        $facebookUser = Socialite::driver('facebook')
+            ->setHttpClient(new \GuzzleHttp\Client(['verify' => false]))
+            ->stateless()
+            ->userFromToken($accessToken);
+
+        if (!$facebookUser->getEmail()) {
+            return response()->json(['error' => 'Facebook account email is required.'], 400);
         }
-        
-        public function redirectToProvider($provider)
-        {
-            $validated = $this->validateProvider($provider);
-            if (!is_null($validated)) {
-                return $validated;
-            }
-    
-            return Socialite::driver($provider)->stateless()->redirect();
+
+        // Split name into first and last name
+        $nameParts = explode(' ', $facebookUser->getName(), 2);
+        $firstName = $nameParts[0] ?? '';
+        $lastName = $nameParts[1] ?? '';
+
+        $user = User::updateOrCreate(
+            ['email' => $facebookUser->getEmail()],
+            [
+                'first_name' => $firstName,
+                'last_name' => $lastName,
+                'facebook_id' => $facebookUser->getId(),
+                'password' => Hash::make(Str::random(24)), // More secure than static password
+                'is_email_verified' => true,
+                'login_provider' => 'facebook',
+                'last_login_at' => now(),
+                'is_active' => true,
+            ]
+        );
+
+        $token = JWTAuth::fromUser($user);
+
+        return response()->json([
+            'message' => 'Facebook login successful',
+            'user' => $user,
+            'access_token' => $token,
+            'token_type' => 'Bearer',
+        ]);
+
+    } catch (\Exception $e) {
+        \Log::error('Facebook Authentication Error: ' . $e->getMessage());
+        return response()->json([
+            'error' => 'Facebook authentication failed',
+            'details' => $e->getMessage() // Only include in development
+        ], 500);
+    }
+}
+    public function redirectToProvider($provider)
+    {
+        $validated = $this->validateProvider($provider);
+        if (!is_null($validated)) {
+            return $validated;
         }
-    
-        /**
-         * Handle provider callback
-         */
-        public function handleProviderCallback($provider)
-        {
-            $validated = $this->validateProvider($provider);
-            if (!is_null($validated)) {
-                return $validated;
-            }
-    
-            try {
-                $socialUser = Socialite::driver($provider)->stateless()->user();
-            } catch (\Exception $e) {
-                return response()->json(['error' => 'Invalid credentials provided'], 422);
-            }
-    
-            // Check if we have an email
-            if (!$socialUser->getEmail()) {
-                return response()->json(['error' => 'No email address provided from the provider'], 400);
-            }
-    
-            // Create or update user
-            $user = User::updateOrCreate(
-                ['email' => $socialUser->getEmail()],
-                [
-                    'first_name' => $this->extractFirstName($socialUser),
-                    'last_name' => $this->extractLastName($socialUser),
-                    'email' => $socialUser->getEmail(),
-                    'login_provider' => $provider,
-                    'provider_id' => $socialUser->getId(),
-                    'password' => null, // No password for social login
-                    'is_email_verified' => true,
-                    'is_active' => true,
-                    'last_login_at' => now(),
-                ]
-            );
-    
-            // Generate JWT token
-            $token = JWTAuth::fromUser($user);
-    
-            return response()->json([
-                'access_token' => $token,
-                'token_type' => 'bearer',
-                'expires_in' => auth()->factory()->getTTL() * 60,
-                'user' => $user
-            ]);
+
+        return Socialite::driver($provider)->stateless()->redirect();
+    }
+
+    /**
+     * Handle provider callback
+     */
+    public function handleProviderCallback($provider)
+    {
+        $validated = $this->validateProvider($provider);
+        if (!is_null($validated)) {
+            return $validated;
         }
-    
-        /**
-         * Extract first name from social user
-         */
-        protected function extractFirstName($socialUser)
-        {
-            if ($socialUser->getName()) {
-                $parts = explode(' ', $socialUser->getName());
-                return $parts[0];
-            }
-            return $socialUser->getNickname() ?? 'User';
+
+        try {
+            $socialUser = Socialite::driver($provider)->stateless()->user();
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Invalid credentials provided'], 422);
         }
-    
-        /**
-         * Extract last name from social user
-         */
-        protected function extractLastName($socialUser)
-        {
-            if ($socialUser->getName()) {
-                $parts = explode(' ', $socialUser->getName());
-                return count($parts) > 1 ? $parts[1] : '';
-            }
-            return '';
+
+        // Check if we have an email
+        if (!$socialUser->getEmail()) {
+            return response()->json(['error' => 'No email address provided from the provider'], 400);
         }
-    
-        /**
-         * Validate provider
-         */
+
+        // Create or update user
+        $user = User::updateOrCreate(
+            ['email' => $socialUser->getEmail()],
+            [
+                'first_name' => $this->extractFirstName($socialUser),
+                'last_name' => $this->extractLastName($socialUser),
+                'email' => $socialUser->getEmail(),
+                'login_provider' => $provider,
+                'provider_id' => $socialUser->getId(),
+                'password' => null, // No password for social login
+                'is_email_verified' => true,
+                'is_active' => true,
+                'last_login_at' => now(),
+            ]
+        );
+
+        // Generate JWT token
+        $token = JWTAuth::fromUser($user);
+
+        return response()->json([
+            'access_token' => $token,
+            'token_type' => 'bearer',
+            'expires_in' => auth()->factory()->getTTL() * 60,
+            'user' => $user
+        ]);
+    }
+
+    /**
+     * Extract first name from social user
+     */
+    protected function extractFirstName($socialUser)
+    {
+        if ($socialUser->getName()) {
+            $parts = explode(' ', $socialUser->getName());
+            return $parts[0];
+        }
+        return $socialUser->getNickname() ?? 'User';
+    }
+
+    /**
+     * Extract last name from social user
+     */
+    protected function extractLastName($socialUser)
+    {
+        if ($socialUser->getName()) {
+            $parts = explode(' ', $socialUser->getName());
+            return count($parts) > 1 ? $parts[1] : '';
+        }
+        return '';
+    }
+
+    /**
+     * Validate provider
+     */
 protected function validateProvider($provider)
-        {
-            $validProviders = ['google', 'facebook'];
-    
-            if (!in_array($provider, $validProviders)) {
-                return response()->json(['error' => 'Invalid provider'], 422);
-            }
-    
-            return null;
+    {
+        $validProviders = ['google', 'facebook'];
+
+        if (!in_array($provider, $validProviders)) {
+            return response()->json(['error' => 'Invalid provider'], 422);
         }
+
+        return null;
+    }
 }
 
