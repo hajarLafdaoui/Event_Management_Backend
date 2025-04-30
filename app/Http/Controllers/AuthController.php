@@ -2,18 +2,22 @@
 
 namespace App\Http\Controllers;
 use App\Models\User;
+use Google\Client as Google_Client;
+
+use GuzzleHttp\Client;
+use Laravel\Socialite\Facades\Socialite;
+
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Tymon\JWTAuth\Facades\JWTAuth;  
 use Illuminate\Auth\Events\Registered;
+use GuzzleHttp\Client as GuzzleClient; 
 use Illuminate\Support\Facades\Storage;
-use Laravel\Socialite\Facades\Socialite;
+// use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Support\Facades\Validator;
-use Tymon\JWTAuth\Facades\JWTAuth;  
-use Google_Client;  
-use GuzzleHttp\Client as GuzzleClient; 
 use Illuminate\Support\Facades\Password;  
 
 class AuthController extends Controller
@@ -166,23 +170,31 @@ class AuthController extends Controller
         $user = $request->user();
 
         $validator = Validator::make($request->all(), [
-            'first_name' => 'sometimes|string|max:100',
-            'last_name' => 'sometimes|string|max:100',
-            'phone' => 'sometimes|string|max:20|nullable',
+            'first_name' => 'string|max:100',
+            'last_name' => 'string|max:100',
+            'phone' => 'string|max:20|nullable',
             'profile_picture' => 'nullable|string', // Only update if provided
         ]);
 
-        if ($request->has('profile_picture')) {
-            // Handle picture update
-            $user->profile_picture = $this->handleBase64Image($request->profile_picture, $user->profile_picture);
-        }
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
 
         $data = $request->only(['first_name', 'last_name', 'phone']);
 
-        if ($request->hasFile('profile_picture')) {
+        // Handle profile picture removal
+        if ($request->profile_picture === '') {
+            // Clear the profile picture in the database
+            if ($user->profile_picture && Storage::disk('public')->exists($user->profile_picture)) {
+                Storage::disk('public')->delete($user->profile_picture);
+            }
+            $data['profile_picture'] = null;
+        }
+
+        // Handle profile picture upload (Base64 or file)
+        if ($request->has('profile_picture') && $request->profile_picture !== '') {
+            $data['profile_picture'] = $this->handleBase64Image($request->profile_picture, $user->profile_picture);
+        } elseif ($request->hasFile('profile_picture')) {
             $path = $request->file('profile_picture')->store('profile_pictures', 'public');
             $data['profile_picture'] = $path;
         }
@@ -300,44 +312,37 @@ class AuthController extends Controller
     }    
     
     // social login
-    public function handleGoogleCallback(Request $request)
-    {
-        $googleToken = $request->input('token');
+
+
+public function handleGoogleCallback(Request $request)
+{
+    $client = new Google_Client(['client_id' => env('GOOGLE_CLIENT_ID')]);
+    $payload = $client->verifyIdToken($request->token);
+    
+    if ($payload) {
+        $user = User::updateOrCreate(
+            ['email' => $payload['email']],
+            [
+                'first_name' => $payload['given_name'] ?? '',
+                'last_name' => $payload['family_name'] ?? '',
+                'google_id' => $payload['sub'],
+                'password' => Hash::make(Str::random(24)),
+                'is_email_verified' => true,
+                'login_provider' => 'google',
+                'last_login_at' => now(),
+            ]
+        );
         
-        if (!$googleToken) {
-            return response()->json(['error' => 'Token not provided'], 400);
-        }
-    
-        try {
-            $client = new Google_Client();
-            $client->setClientId(env('GOOGLE_CLIENT_ID'));
-            $client->setHttpClient(new GuzzleClient(['verify' => false]));
-    
-            $payload = $client->verifyIdToken($googleToken);
-    
-            if (!$payload || $payload['aud'] !== env('GOOGLE_CLIENT_ID')) {
-                return response()->json(['error' => 'Invalid token'], 400);
-            }
-    
-            $user = User::updateOrCreate(
-                ['google_id' => $payload['sub']],
-                [
-                    'name' => $payload['name'],
-                    'email' => $payload['email'],
-                    'google_id' => $payload['sub'],
-                    'password' => bcrypt(Str::random(10)), // Set a random password
-                ]
-            );
-    
-            $token = JWTAuth::fromUser($user);
-    
-            return response()->json(['user' => $user, 'token' => $token], 200);
-    
-        } catch (\Exception $e) {
-            \Log::error("Google OAuth Error: {$e->getMessage()}");
-            return response()->json(['error' => 'Server error'], 500);
-        }
+        $token = JWTAuth::fromUser($user);
+        return response()->json([
+            'user' => $user,
+            'token' => $token,
+            'token_type' => 'Bearer',
+        ]);
+    } else {
+        return response()->json(['error' => 'Invalid token'], 400);
     }
+}
         public function handleFacebookCallback(Request $request)
         {
             $accessToken = $request->input('accessToken'); 
@@ -464,11 +469,15 @@ class AuthController extends Controller
         /**
          * Validate provider
          */
-        protected function validateProvider($provider)
+protected function validateProvider($provider)
         {
-            if (!in_array($provider, ['facebook', 'google'])) {
-                return response()->json(['error' => 'Please login using facebook or google'], 422);
+            $validProviders = ['google', 'facebook'];
+    
+            if (!in_array($provider, $validProviders)) {
+                return response()->json(['error' => 'Invalid provider'], 422);
             }
+    
+            return null;
         }
 }
 

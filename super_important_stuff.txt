@@ -27,3 +27,5 @@ php artisan make:migration create_password_resets_table
 //SOCIAL LOGIN
 composer require laravel/socialite
 composer require google/apiclient:^2.0
+
+//29/04
