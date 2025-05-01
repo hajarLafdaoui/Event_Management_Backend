@@ -3,6 +3,11 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\EventTypeController;
+use App\Http\Controllers\EventTemplateController;
+use App\Http\Controllers\EventController;
+use App\Http\Controllers\TaskTemplateController;
+use App\Http\Controllers\EventTaskController;
 use OpenAI\Laravel\Facades\OpenAI;
 
 Route::prefix('auth')->group(function () {    // Basic Authentication
@@ -74,4 +79,24 @@ Route::prefix('events')->middleware('auth:api')->group(function () {
     // Template and AI Generation Routes
     Route::post('/generate-from-template/{template}', [EventController::class, 'generateFromTemplate']);
     Route::post('/generate-with-ai', [EventController::class, 'generateWithAI']);
+});
+
+// Task Templates Routes
+Route::prefix('task-templates')->middleware('auth:api')->group(function () {
+    Route::get('/', [TaskTemplateController::class, 'index']);
+    Route::post('/', [TaskTemplateController::class, 'store'])->middleware('role:admin');
+    Route::get('/{taskTemplate}', [TaskTemplateController::class, 'show']);
+    Route::put('/{taskTemplate}', [TaskTemplateController::class, 'update'])->middleware('role:admin');
+    Route::delete('/{taskTemplate}', [TaskTemplateController::class, 'destroy'])->middleware('role:admin');
+    Route::post('/generate-with-ai', [TaskTemplateController::class, 'generateWithAI'])->middleware('role:admin');
+});
+
+// Event Tasks Routes
+Route::prefix('event-tasks')->middleware('auth:api')->group(function () {
+    Route::get('/', [EventTaskController::class, 'index']);
+    Route::post('/', [EventTaskController::class, 'store']);
+    Route::get('/{eventTask}', [EventTaskController::class, 'show']);
+    Route::put('/{eventTask}', [EventTaskController::class, 'update']);
+    Route::delete('/{eventTask}', [EventTaskController::class, 'destroy']);
+    Route::post('/generate-from-template/{taskTemplate}', [EventTaskController::class, 'generateFromTemplate']);
 });
