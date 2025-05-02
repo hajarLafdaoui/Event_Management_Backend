@@ -47,7 +47,7 @@ Route::prefix('auth')->group(function () {    // Basic Authentication
     }
 });
 });
-
+//--- EVENT MANAGEMENT ROUTES ---//
 // Event Types Routes
 Route::prefix('event-types')->middleware('auth:api')->group(function () {
     Route::get('/', [EventTypeController::class, 'index']);
@@ -81,6 +81,7 @@ Route::prefix('events')->middleware('auth:api')->group(function () {
     Route::post('/generate-with-ai', [EventController::class, 'generateWithAI']);
 });
 
+//--- TASK MANAGEMENT ROUTES ---//
 // Task Templates Routes
 Route::prefix('task-templates')->middleware('auth:api')->group(function () {
     Route::get('/', [TaskTemplateController::class, 'index']);
