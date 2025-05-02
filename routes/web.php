@@ -18,11 +18,10 @@ Route::get('/', function () {
 //      ->name('api.verification.verify'); // This is called by your frontend
 
 // Show reset password form (GET request)
-Route::get('/reset-password/{token}', function ($token) {
-     return view('auth.reset-password', ['token' => $token]);
- })->name('password.reset');
+// Route::get('/reset-password/{token}', function ($token) {
+//      return view('auth.reset-password', ['token' => $token]);
+//  })->name('password.reset');
  
-// Handle reset password form submission (POST request)
-Route::post('/reset-password', [AuthController::class, 'resetPassword'])
-     ->name('password.update');
-
+// // Handle reset password form submission (POST request)
+// Route::post('/reset-password', [AuthController::class, 'resetPassword'])
+//      ->name('password.update');
