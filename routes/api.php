@@ -11,50 +11,51 @@ use App\Http\Controllers\TaskTemplateController;
 use App\Http\Controllers\EventTaskController;
 use OpenAI\Laravel\Facades\OpenAI;
 
-    // ─────────────────────────────────────────────────
-    // Public auth & verification
-
-
+// ─────────────────────────────────────────────────
+// Public auth & verification
 Route::prefix('auth')->group(function () {    // Basic Authentication
     Route::post('/register', [AuthController::class, 'register']);
-    Route::post('/login',    [AuthController::class, 'login']);
+    Route::post('/login', [AuthController::class, 'login']);
     Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, '__invoke'])
-         ->name('verification.verify');
+        ->name('verification.verify');
     Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])
-         ->name('password.email');
-    Route::post('/reset-password',  [AuthController::class, 'resetPassword'])
-         ->name('password.update');
+        ->name('password.email');
+    Route::post('/reset-password', [AuthController::class, 'resetPassword'])
+        ->name('password.update');
 
     // ─────────────────────────────────────────────────
     // Protected user routes
     Route::middleware('auth:api')->group(function () {
-        Route::post('/logout',  [AuthController::class, 'logout']);
-        Route::get('/me',       [AuthController::class, 'me']);
-        Route::put('/profile',  [AuthController::class, 'updateProfile']);
+        Route::post('/logout', [AuthController::class, 'logout']);
+        Route::get('/me', [AuthController::class, 'me']);
+        Route::put('/profile', [AuthController::class, 'updateProfile']);
         Route::put('/password', [AuthController::class, 'updatePassword']);
 
         // ─────────────────────────────────────────────
         // Admin-only routes
         Route::prefix('admin')->group(function () {
-            Route::get('/users',              [AdminController::class, 'index']);
-            Route::get('/users/{id}',         [AdminController::class, 'show']);
-            Route::put('/users/{id}',         [AdminController::class, 'update']);
-            Route::delete('/users/{id}',      [AdminController::class, 'destroy']);
-            Route::post('/users/{id}/restore',[AdminController::class, 'restore']);
-            Route::delete('/users/{id}/force',[AdminController::class, 'forceDelete']);
+            Route::get('/users', [AdminController::class, 'index']);
+            Route::get('/users/{id}', [AdminController::class, 'show']);
+            Route::put('/users/{id}', [AdminController::class, 'update']);
+            Route::delete('/users/{id}', [AdminController::class, 'destroy']);
+            Route::post('/users/{id}/restore', [AdminController::class, 'restore']);
+            Route::delete('/users/{id}/force', [AdminController::class, 'forceDelete']);
         });
     });
 
     // ─────────────────────────────────────────────────
     // Social & notification routes…
-    Route::get('/{provider}',              [AuthController::class, 'redirectToProvider']);
-    Route::get('/{provider}/callback',     [AuthController::class, 'handleProviderCallback']);
-    Route::post('/google/callback',        [AuthController::class, 'handleGoogleCallback']);
-    Route::post('/facebook/callback',      [AuthController::class, 'handleFacebookCallback']);
-    Route::post('/email/verification-notification',
-                    [VerifyEmailController::class, 'resend'])
+    Route::get('/{provider}', [AuthController::class, 'redirectToProvider']);
+    Route::get('/{provider}/callback', [AuthController::class, 'handleProviderCallback']);
+    Route::post('/google/callback', [AuthController::class, 'handleGoogleCallback']);
+    Route::post('/facebook/callback', [AuthController::class, 'handleFacebookCallback']);
+    Route::post(
+        '/email/verification-notification',
+        [VerifyEmailController::class, 'resend']
+    )
         ->name('verification.send');
 });
+
 
 
 // A standalone example if you ever need a “/user” endpoint:
@@ -64,6 +65,7 @@ Route::get('/user', function (Request $request) {
 
 
 //--- EVENT MANAGEMENT ROUTES ---//
+
 // Event Types Routes
 Route::prefix('event-types')->middleware('auth:api')->group(function () {
     Route::get('/', [EventTypeController::class, 'index']);
@@ -79,7 +81,7 @@ Route::prefix('event-templates')->middleware('auth:api')->group(function () {
     Route::get('/{template}', [EventTemplateController::class, 'show']);
     Route::put('/{template}', [EventTemplateController::class, 'update'])->middleware('role:admin');
     Route::delete('/{template}', [EventTemplateController::class, 'destroy'])->middleware('role:admin');
-    
+
     // AI Generation Route
     Route::post('/generate-with-ai', [EventTemplateController::class, 'generateWithAI'])->middleware('role:admin');
 });
@@ -91,7 +93,7 @@ Route::prefix('events')->middleware('auth:api')->group(function () {
     Route::get('/{event}', [EventController::class, 'show']);
     Route::put('/{event}', [EventController::class, 'update']);
     Route::delete('/{event}', [EventController::class, 'destroy']);
-    
+
     // Template and AI Generation Routes
     Route::post('/generate-from-template/{template}', [EventController::class, 'generateFromTemplate']);
     Route::post('/generate-with-ai', [EventController::class, 'generateWithAI']);
