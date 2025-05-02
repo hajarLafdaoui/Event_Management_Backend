@@ -1,14 +1,19 @@
 <?php
-
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\AdminController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EventTypeController;
 use App\Http\Controllers\EventTemplateController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\TaskTemplateController;
 use App\Http\Controllers\EventTaskController;
 use OpenAI\Laravel\Facades\OpenAI;
+
+    // ─────────────────────────────────────────────────
+    // Public auth & verification
+
 
 Route::prefix('auth')->group(function () {    // Basic Authentication
     Route::post('/register', [AuthController::class, 'register']);
@@ -47,7 +52,7 @@ Route::prefix('auth')->group(function () {    // Basic Authentication
     }
 });
 });
-//--- EVENT MANAGEMENT ROUTES ---//
+
 // Event Types Routes
 Route::prefix('event-types')->middleware('auth:api')->group(function () {
     Route::get('/', [EventTypeController::class, 'index']);

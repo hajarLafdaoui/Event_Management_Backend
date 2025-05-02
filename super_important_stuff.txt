@@ -18,3 +18,14 @@ php artisan make:notification VerifyEmail
 php artisan queue:work --once -v
 php -v
 php artisan queue:listen
+
+25/04
+//RESET PASSWORD
+php artisan make:notification ResetPasswordNotification
+php artisan make:migration create_password_resets_table
+
+//SOCIAL LOGIN
+composer require laravel/socialite
+composer require google/apiclient:^2.0
+
+//29/04
