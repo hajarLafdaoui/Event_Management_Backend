@@ -17,42 +17,52 @@ use OpenAI\Laravel\Facades\OpenAI;
 
 Route::prefix('auth')->group(function () {    // Basic Authentication
     Route::post('/register', [AuthController::class, 'register']);
-    Route::post('/login', [AuthController::class, 'login']);
-    Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:api');
-    Route::get('/me', [AuthController::class, 'me'])->middleware('auth:api');
-    
-    // Profile Management
-    Route::put('/profile', [AuthController::class, 'updateProfile'])->middleware('auth:api');
-    Route::put('/password', [AuthController::class, 'updatePassword'])->middleware('auth:api');
-    
-    // Password Reset
-    Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
-    Route::post('/reset-password', [AuthController::class, 'resetPassword']);
-    
-    // Social Authentication
-    Route::get('/social/{provider}', [AuthController::class, 'redirectToProvider']);
-    Route::get('/social/{provider}/callback', [AuthController::class, 'handleProviderCallback']);
-    
-    // Google/Facebook specific (if needed)
-    Route::post('/google/callback', [AuthController::class, 'handleGoogleCallback']);
-    Route::post('/facebook/callback', [AuthController::class, 'handleFacebookCallback']);
-     // Email Verification Routes
-     Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verifyEmail'])
-     ->name('verification.verify');
-     
- Route::post('/email/verification-notification', [AuthController::class, 'resendVerificationEmail']);
- Route::get('/test-mail', function() {
-    try {
-        \Mail::raw('Test email', function($message) {
-            $message->to('test@example.com')->subject('Test');
+    Route::post('/login',    [AuthController::class, 'login']);
+    Route::get('/email/verify/{id}/{hash}', [VerifyEmailController::class, '__invoke'])
+         ->name('verification.verify');
+    Route::post('/forgot-password', [AuthController::class, 'forgotPassword'])
+         ->name('password.email');
+    Route::post('/reset-password',  [AuthController::class, 'resetPassword'])
+         ->name('password.update');
+
+    // ─────────────────────────────────────────────────
+    // Protected user routes
+    Route::middleware('auth:api')->group(function () {
+        Route::post('/logout',  [AuthController::class, 'logout']);
+        Route::get('/me',       [AuthController::class, 'me']);
+        Route::put('/profile',  [AuthController::class, 'updateProfile']);
+        Route::put('/password', [AuthController::class, 'updatePassword']);
+
+        // ─────────────────────────────────────────────
+        // Admin-only routes
+        Route::prefix('admin')->group(function () {
+            Route::get('/users',              [AdminController::class, 'index']);
+            Route::get('/users/{id}',         [AdminController::class, 'show']);
+            Route::put('/users/{id}',         [AdminController::class, 'update']);
+            Route::delete('/users/{id}',      [AdminController::class, 'destroy']);
+            Route::post('/users/{id}/restore',[AdminController::class, 'restore']);
+            Route::delete('/users/{id}/force',[AdminController::class, 'forceDelete']);
         });
-        return 'Email sent';
-    } catch (\Exception $e) {
-        return 'Error: '.$e->getMessage();
-    }
-});
+    });
+
+    // ─────────────────────────────────────────────────
+    // Social & notification routes…
+    Route::get('/{provider}',              [AuthController::class, 'redirectToProvider']);
+    Route::get('/{provider}/callback',     [AuthController::class, 'handleProviderCallback']);
+    Route::post('/google/callback',        [AuthController::class, 'handleGoogleCallback']);
+    Route::post('/facebook/callback',      [AuthController::class, 'handleFacebookCallback']);
+    Route::post('/email/verification-notification',
+                    [VerifyEmailController::class, 'resend'])
+        ->name('verification.send');
 });
 
+//--- EVENT MANAGEMENT ROUTES ---//
+
+
+// A standalone example if you ever need a “/user” endpoint:
+Route::get('/user', function (Request $request) {
+    return $request->user();
+})->middleware('auth:sanctum');
 // Event Types Routes
 Route::prefix('event-types')->middleware('auth:api')->group(function () {
     Route::get('/', [EventTypeController::class, 'index']);
