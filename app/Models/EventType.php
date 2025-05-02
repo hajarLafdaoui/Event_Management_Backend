@@ -35,4 +35,8 @@ class EventType extends Model
     {
         return $this->hasMany(Event::class, 'event_type_id');
     }
+    public function taskTemplates()
+    {
+        return $this->hasMany(TaskTemplate::class, 'event_type_id');
+    }
 }
