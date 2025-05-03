@@ -58,6 +58,14 @@ Route::prefix('auth')->group(function () {    // Basic Authentication
 
 
 
+// A standalone example if you ever need a “/user” endpoint:
+Route::get('/user', function (Request $request) {
+    return $request->user();
+})->middleware('auth:sanctum');
+
+
+//--- EVENT MANAGEMENT ROUTES ---//
+
 // Event Types Routes
 Route::prefix('event-types')->middleware('auth:api')->group(function () {
     Route::get('/', [EventTypeController::class, 'index']);
