@@ -1,15 +1,17 @@
 <?php
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\Auth\VerifyEmailController;
-use App\Http\Controllers\AdminController;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\EventTypeController;
-use App\Http\Controllers\EventTemplateController;
-use App\Http\Controllers\EventController;
-use App\Http\Controllers\TaskTemplateController;
-use App\Http\Controllers\EventTaskController;
 use OpenAI\Laravel\Facades\OpenAI;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\EventController;
+use App\Http\Controllers\EventTaskController;
+use App\Http\Controllers\EventTypeController;
+use App\Http\Controllers\TaskTemplateController;
+use App\Http\Controllers\EventTemplateController;
+
+use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\Vendor\VendorCategoryController;
 
 // ─────────────────────────────────────────────────
 // Public auth & verification
@@ -56,6 +58,15 @@ Route::prefix('auth')->group(function () {    // Basic Authentication
         ->name('verification.send');
 });
 
+
+// Vendor Categories
+Route::prefix('vendor-categories')->group(function () {
+    Route::get('/', [VendorCategoryController::class, 'getVendorCategories']);
+    Route::post('/', [VendorCategoryController::class, 'createVendorCategory']);
+    Route::get('/{id}', [VendorCategoryController::class, 'getVendorCategory']);
+    Route::put('/{id}', [VendorCategoryController::class, 'updateVendorCategory']);
+    Route::delete('/{id}', [VendorCategoryController::class, 'deleteVendorCategory']);
+});
 
 
 // A standalone example if you ever need a “/user” endpoint:
@@ -119,3 +130,4 @@ Route::prefix('event-tasks')->middleware('auth:api')->group(function () {
     Route::delete('/{eventTask}', [EventTaskController::class, 'destroy']);
     Route::post('/generate-from-template/{taskTemplate}', [EventTaskController::class, 'generateFromTemplate']);
 });
+
