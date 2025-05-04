@@ -12,6 +12,8 @@ use App\Http\Controllers\EventTemplateController;
 
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Vendor\VendorCategoryController;
+use App\Http\Controllers\Vendor\VendorController;
+
 
 // ─────────────────────────────────────────────────
 // Public auth & verification
@@ -68,6 +70,19 @@ Route::prefix('vendor-categories')->group(function () {
     Route::delete('/{id}', [VendorCategoryController::class, 'deleteVendorCategory']);
 });
 
+// Vendor
+
+Route::prefix('vendors')->group(function () {
+    Route::get('/', [VendorController::class, 'getVendors']);
+    Route::post('/', [VendorController::class, 'createVendor']);
+    Route::get('/{id}', [VendorController::class, 'getVendor']);
+    Route::put('/{id}', [VendorController::class, 'updateVendor']);
+    Route::delete('/{id}', [VendorController::class, 'deleteVendor']);
+    
+    // Additional vendor-specific routes
+    Route::get('/categories/{category_id}', [VendorController::class, 'getVendorsByCategory']);
+    Route::get('/cities/list', [VendorController::class, 'getCities']);
+});
 
 // A standalone example if you ever need a “/user” endpoint:
 Route::get('/user', function (Request $request) {

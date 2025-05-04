@@ -3,7 +3,7 @@
 namespace App\Models\Vendor;
 
 use App\Models\User;
-use App\Models\VendorCategory;
+use App\Models\Vendor\VendorCategory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -16,9 +16,9 @@ class Vendor extends Model
         'vendor_category_id',
         'business_name',
         'description',
-        'contact_email',
-        'contact_phone',
-        'address',
+        'country',
+        'city',
+        'street_address',
         'website',
         'status',
         'rejection_reason'
@@ -28,33 +28,40 @@ class Vendor extends Model
         'status' => 'string'
     ];
 
-    public function category()
-    {
-        return $this->belongsTo(VendorCategory::class, 'vendor_category_id');
-    }
-
+    // Relationships
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    // public function portfolios(): HasMany
-    // {
-    //     return $this->hasMany(VendorPortfolio::class);
-    // }
+    public function category()
+    {
+        return $this->belongsTo(VendorCategory::class, 'vendor_category_id');
+    }
 
-    // public function services(): HasMany
-    // {
-    //     return $this->hasMany(VendorService::class);
-    // }
+    public function portfolios()
+    {
+        return $this->hasMany(VendorPortfolio::class);
+    }
 
-    // public function availabilities(): HasMany
-    // {
-    //     return $this->hasMany(VendorAvailability::class);
-    // }
+    public function services()
+    {
+        return $this->hasMany(VendorService::class);
+    }
 
-    // public function approvals(): HasMany
-    // {
-    //     return $this->hasMany(VendorApproval::class);
-    // }
+    public function availabilities()
+    {
+        return $this->hasMany(VendorAvailability::class);
+    }
+
+    public function approvals()
+    {
+        return $this->hasMany(VendorApproval::class);
+    }
+
+    // Accessor for full address
+    public function getFullAddressAttribute()
+    {
+        return "{$this->street_address}, {$this->city}, {$this->country}";
+    }
 }

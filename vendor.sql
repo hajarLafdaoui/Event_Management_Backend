@@ -1,49 +1,36 @@
-Profile Mgmt → 2. Portfolio → 3. Services → 4. Pricing → 5. Admin Approval → (Then: Bookings, Chat, Payments, Reviews)
-Create the migrations for the vendor management system (vendor profile, portfolio, services, pricing packages, availability, and admin approvals).
-# 1. Vendor Categories (Prerequisite for vendors)
-php artisan make:migration create_vendor_categories_table
+1. vendor_categories →
 
-# 2. Vendor Profile Management
-php artisan make:migration create_vendors_table
+2. vendors →
+3. vendor_portfolios → 
+4. vendor_services → 
+5. vendor_pricing_packages → 
+6. vendor_availabilities → 
+7. vendor_approvals →
+(Then: Bookings, Chat, Payments, Reviews)
 
-# 3. Vendor Portfolio
-php artisan make:migration create_vendor_portfolios_table
-
-# 4. Vendor Services
-php artisan make:migration create_vendor_services_table
-
-# 5. Pricing Packages
-php artisan make:migration create_vendor_pricing_packages_table
-
-# 6. Vendor Availability
-php artisan make:migration create_vendor_availabilities_table
-
-# 7. Admin Approvals
-php artisan make:migration create_vendor_approvals_table
 1
 Schema::create('vendor_categories', function (Blueprint $table) {
     $table->id();
     $table->string('name'); // "Photographer", "Caterer", "Venue"
-            $table->text('description')->nullable();
-
+    $table->text('description')->nullable();
     $table->timestamps();
 });     
 
 2
-Schema::create('vendors', function (Blueprint $table) {
-    $table->id();
-    $table->foreignId('user_id')->constrained()->cascadeOnDelete(); // Links to Users table
-    $table->foreignId('vendor_category_id')->constrained(); // Primary service type
-    $table->string('business_name');
-    $table->text('description');
-    $table->string('contact_email');
-    $table->string('contact_phone');
-    $table->string('address');
-    $table->string('website')->nullable();
-    $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
-    $table->text('rejection_reason')->nullable();
-    $table->timestamps();
-});
+     Schema::create('vendors', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete(); // Links to Users table
+            $table->foreignId('vendor_category_id')->constrained(); // Primary service type
+            $table->string('business_name');
+            $table->text('description');
+            $table->string('country')->default('Morocco'); // Set a default if needed
+            $table->string('city');
+            $table->string('street_address');      // e.g., "123 Main St"
+            $table->string('website')->nullable();
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->text('rejection_reason')->nullable();
+            $table->timestamps();
+        });
 
 3
 Schema::create('vendor_portfolios', function (Blueprint $table) {
