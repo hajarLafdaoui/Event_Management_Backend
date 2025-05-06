@@ -10,9 +10,10 @@ use App\Http\Controllers\EventTypeController;
 use App\Http\Controllers\TaskTemplateController;
 use App\Http\Controllers\EventTemplateController;
 
+use App\Http\Controllers\Vendor\VendorController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Vendor\VendorCategoryController;
-use App\Http\Controllers\Vendor\VendorController;
+use App\Http\Controllers\vendor\VendorPortfolioController;
 
 
 // ─────────────────────────────────────────────────
@@ -71,7 +72,6 @@ Route::prefix('vendor-categories')->group(function () {
 });
 
 // Vendor
-
 Route::prefix('vendors')->group(function () {
     Route::get('/', [VendorController::class, 'getVendors']);
     Route::post('/', [VendorController::class, 'createVendor']);
@@ -79,10 +79,19 @@ Route::prefix('vendors')->group(function () {
     Route::put('/{id}', [VendorController::class, 'updateVendor']);
     Route::delete('/{id}', [VendorController::class, 'deleteVendor']);
     
-    // Additional vendor-specific routes
-    Route::get('/categories/{category_id}', [VendorController::class, 'getVendorsByCategory']);
-    Route::get('/cities/list', [VendorController::class, 'getCities']);
 });
+
+// Vendor Portfolio Routes
+Route::prefix('vendors/{vendor}/portfolio')->group(function () {
+    Route::get('/', [VendorPortfolioController::class, 'getVendorPortfolios']);
+    Route::post('/', [VendorPortfolioController::class, 'createPortfolioItem']);
+    Route::get('/{portfolio}', [VendorPortfolioController::class, 'getPortfolioItem']);
+    Route::put('/{portfolio}', [VendorPortfolioController::class, 'updatePortfolioItem']);
+    Route::delete('/{portfolio}', [VendorPortfolioController::class, 'deletePortfolioItem']);
+});
+
+
+
 
 // A standalone example if you ever need a “/user” endpoint:
 Route::get('/user', function (Request $request) {

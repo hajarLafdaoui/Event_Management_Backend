@@ -1,7 +1,8 @@
 1. vendor_categories →
-
 2. vendors →
+
 3. vendor_portfolios → 
+
 4. vendor_services → 
 5. vendor_pricing_packages → 
 6. vendor_availabilities → 
@@ -17,20 +18,20 @@ Schema::create('vendor_categories', function (Blueprint $table) {
 });     
 
 2
-     Schema::create('vendors', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete(); // Links to Users table
-            $table->foreignId('vendor_category_id')->constrained(); // Primary service type
-            $table->string('business_name');
-            $table->text('description');
-            $table->string('country')->default('Morocco'); // Set a default if needed
-            $table->string('city');
-            $table->string('street_address');      // e.g., "123 Main St"
-            $table->string('website')->nullable();
-            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
-            $table->text('rejection_reason')->nullable();
-            $table->timestamps();
-        });
+Schema::create('vendors', function (Blueprint $table) {
+    $table->id();
+    $table->foreignId('user_id')->constrained()->cascadeOnDelete(); // Links to Users table
+    $table->foreignId('vendor_category_id')->constrained(); // Primary service type
+    $table->string('business_name');
+    $table->text('description');
+    $table->string('country')->default('Morocco'); // Set a default if needed
+    $table->string('city');
+    $table->string('street_address');      // e.g., "123 Main St"
+    $table->string('website')->nullable();
+    $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
+    $table->text('rejection_reason')->nullable();
+    $table->timestamps();
+});
 
 3
 Schema::create('vendor_portfolios', function (Blueprint $table) {

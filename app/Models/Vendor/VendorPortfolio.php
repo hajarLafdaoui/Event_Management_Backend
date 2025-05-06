@@ -15,6 +15,10 @@ class VendorPortfolio extends Model
         'url',
         'caption'
     ];
+    protected $casts = [
+        'type' => 'string',
+    ];
+
 
     public function vendor()
     {
