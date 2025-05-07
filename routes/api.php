@@ -13,8 +13,10 @@ use App\Http\Controllers\EventTemplateController;
 use App\Http\Controllers\Vendor\VendorController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Vendor\VendorServiceController;
+use App\Http\Controllers\Vendor\VendorApprovalController;
 use App\Http\Controllers\Vendor\VendorCategoryController;
 use App\Http\Controllers\vendor\VendorPortfolioController;
+use App\Http\Controllers\Vendor\VendorAvailabilityController;
 use App\Http\Controllers\Vendor\VendorPricingPackageController;
 
 
@@ -110,6 +112,21 @@ Route::prefix('vendors/{vendor}/services')->group(function () {
     });
 });
 
+// Vendor Availabilities Routes
+Route::prefix('vendors/{vendor}/availabilities')->group(function () {
+    Route::get('/', [VendorAvailabilityController::class, 'index']);
+    Route::post('/', [VendorAvailabilityController::class, 'store']);
+    Route::post('/bulk', [VendorAvailabilityController::class, 'bulkUpdate']);
+    Route::put('/{availability}', [VendorAvailabilityController::class, 'update']);
+    Route::delete('/{availability}', [VendorAvailabilityController::class, 'destroy']);
+});
+
+// Vendor Approvals Routes (Admin only)
+Route::prefix('vendors/{vendor}/approvals')->group(function () {
+    Route::get('/', [VendorApprovalController::class, 'index']);
+    Route::post('/', [VendorApprovalController::class, 'store']);
+    Route::get('/{approval}', [VendorApprovalController::class, 'show']);
+});
 
 
 // A standalone example if you ever need a “/user” endpoint:

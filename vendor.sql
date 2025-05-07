@@ -1,13 +1,12 @@
 1. vendor_categories →
 2. vendors →
 3. vendor_portfolios → 
-
-
 4. vendor_services → 
 5. vendor_pricing_packages → 
 
 6. vendor_availabilities → 
 7. vendor_approvals →
+
 (Then: Bookings, Chat, Payments, Reviews)
 
 1
