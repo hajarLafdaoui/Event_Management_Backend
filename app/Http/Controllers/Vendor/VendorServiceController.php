@@ -132,27 +132,23 @@ class VendorServiceController extends Controller
     {
         $service = VendorService::where('vendor_id', $vendorId)
                         ->find($serviceId);
-
+    
         if (!$service) {
             return response()->json([
                 'success' => false,
                 'message' => 'Service not found'
             ], 404);
         }
-
-        // Check if there are pricing packages associated
-        if ($service->pricingPackages()->exists()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Cannot delete service with associated pricing packages'
-            ], 422);
-        }
-
+    
+        // Delete all associated pricing packages first
+        $service->pricingPackages()->delete();
+    
+        // Then delete the service
         $service->delete();
-
+    
         return response()->json([
             'success' => true,
-            'message' => 'Service deleted successfully'
+            'message' => 'Service and all associated packages deleted successfully'
         ]);
     }
 }
