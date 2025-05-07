@@ -1,9 +1,8 @@
 <?php
 
 namespace App\Models\Vendor;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-
-
 use Illuminate\Database\Eloquent\Model;
 
 class VendorService extends Model
@@ -21,8 +20,8 @@ class VendorService extends Model
         return $this->belongsTo(Vendor::class);
     }
 
-    public function packages()
+    public function pricingPackages()
     {
-        return $this->hasMany(VendorPricingPackage::class);
+        return $this->hasMany(VendorPricingPackage::class, 'vendor_service_id');
     }
 }

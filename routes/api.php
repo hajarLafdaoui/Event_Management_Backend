@@ -12,8 +12,10 @@ use App\Http\Controllers\EventTemplateController;
 
 use App\Http\Controllers\Vendor\VendorController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\Vendor\VendorServiceController;
 use App\Http\Controllers\Vendor\VendorCategoryController;
 use App\Http\Controllers\vendor\VendorPortfolioController;
+use App\Http\Controllers\Vendor\VendorPricingPackageController;
 
 
 // ─────────────────────────────────────────────────
@@ -90,6 +92,23 @@ Route::prefix('vendors/{vendor}/portfolio')->group(function () {
     Route::delete('/{portfolio}', [VendorPortfolioController::class, 'deletePortfolioItem']);
 });
 
+// Vendor Services Routes
+Route::prefix('vendors/{vendor}/services')->group(function () {
+    Route::get('/', [VendorServiceController::class, 'getVendorServices']);
+    Route::post('/', [VendorServiceController::class, 'createVendorService']);
+    Route::get('/{service}', [VendorServiceController::class, 'getVendorService']);
+    Route::put('/{service}', [VendorServiceController::class, 'updateVendorService']);
+    Route::delete('/{service}', [VendorServiceController::class, 'deleteVendorService']);
+    
+    // Pricing Packages Routes
+    Route::prefix('/{service}/packages')->group(function () {
+        Route::get('/', [VendorPricingPackageController::class, 'getPricingPackages']);
+        Route::post('/', [VendorPricingPackageController::class, 'createPricingPackage']);
+        Route::get('/{package}', [VendorPricingPackageController::class, 'getPricingPackage']);
+        Route::put('/{package}', [VendorPricingPackageController::class, 'updatePricingPackage']);
+        Route::delete('/{package}', [VendorPricingPackageController::class, 'deletePricingPackage']);
+    });
+});
 
 
 
