@@ -57,5 +57,9 @@ class Event extends Model
     {
         return $this->hasMany(EventTask::class, 'event_id');
     }
+    public function bookingRequests()
+    {
+    return $this->hasMany(BookingRequest::class, 'event_id');
+    }
     
 }

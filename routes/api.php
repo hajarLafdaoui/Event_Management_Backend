@@ -9,6 +9,8 @@ use App\Http\Controllers\EventTaskController;
 use App\Http\Controllers\EventTypeController;
 use App\Http\Controllers\TaskTemplateController;
 use App\Http\Controllers\EventTemplateController;
+use App\Http\Controllers\BookingRequestController;
+use App\Http\Controllers\VendorPaymentController;
 
 use App\Http\Controllers\Vendor\VendorController;
 use App\Http\Controllers\Auth\VerifyEmailController;
@@ -170,7 +172,9 @@ Route::prefix('events')->middleware('auth:api')->group(function () {
     Route::post('/generate-with-ai', [EventController::class, 'generateWithAI']);
 });
 
+
 //--- TASK MANAGEMENT ROUTES ---//
+
 // Task Templates Routes
 Route::prefix('task-templates')->middleware('auth:api')->group(function () {
     Route::get('/', [TaskTemplateController::class, 'index']);
@@ -190,4 +194,24 @@ Route::prefix('event-tasks')->middleware('auth:api')->group(function () {
     Route::delete('/{eventTask}', [EventTaskController::class, 'destroy']);
     Route::post('/generate-from-template/{taskTemplate}', [EventTaskController::class, 'generateFromTemplate']);
 });
+
+//--- BOOKING & PAYMENT SYSTEM ---//
+
+// Booking Request Routes
+Route::prefix('booking-requests')->middleware('auth:api')->group(function () {
+    Route::get('/', [BookingRequestController::class, 'index']);// Get a list of all booking requests
+    Route::post('/', [BookingRequestController::class, 'store']);// Create a new booking request
+    Route::get('/{id}', [BookingRequestController::class, 'show']);// Get a specific booking request by ID
+    Route::put('/{id}', [BookingRequestController::class, 'update']);// Update an existing booking request by ID
+    Route::delete('/{id}', [BookingRequestController::class, 'destroy']);// Delete a booking request by ID
+});
+// Vendor Payment Routes
+Route::prefix('vendor-payments')->group(function () {
+    Route::get('/', [VendorPaymentController::class, 'index']);  // Get all vendor payments
+    Route::post('/', [VendorPaymentController::class, 'store']);  // Store a new vendor payment
+    Route::get('{payment_id}', [VendorPaymentController::class, 'show']);  // Get a specific vendor payment
+    Route::put('{payment_id}', [VendorPaymentController::class, 'update']);  // Update a specific vendor payment
+    Route::delete('{payment_id}', [VendorPaymentController::class, 'destroy']);  // Delete a specific vendor payment
+});
+
 
