@@ -3,6 +3,7 @@
 namespace App\Models\Vendor;
 
 use App\Models\User;
+use App\Models\Vendor\VendorApproval;
 use App\Models\Vendor\VendorCategory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -54,10 +55,10 @@ class Vendor extends Model
         return $this->hasMany(VendorAvailability::class);
     }
 
-    public function approvals()
-    {
-        return $this->hasMany(VendorApproval::class);
-    }
+   public function approvals()
+{
+    return $this->hasMany(VendorApproval::class);
+}
 
     // Accessor for full address
     public function getFullAddressAttribute()

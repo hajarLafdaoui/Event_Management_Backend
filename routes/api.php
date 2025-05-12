@@ -121,14 +121,14 @@ Route::prefix('vendors/{vendor}/availabilities')->group(function () {
     Route::delete('/{availability}', [VendorAvailabilityController::class, 'destroy']);
 });
 
-// Vendor Approvals Routes (Admin only)
-Route::prefix('vendors/{vendor}/approvals')->group(function () {
+// Vendor Approval Routes
+
+Route::prefix('vendor-approvals')->middleware(['auth:api', 'role:admin'])->group(function () {
     Route::get('/', [VendorApprovalController::class, 'index']);
-    Route::post('/', [VendorApprovalController::class, 'store']);
-    Route::get('/{approval}', [VendorApprovalController::class, 'show']);
+    Route::get('/pending', [VendorApprovalController::class, 'pending']);
+    Route::get('/vendor/{vendor}', [VendorApprovalController::class, 'show']);
+    Route::post('/vendor/{vendor}', [VendorApprovalController::class, 'store']);
 });
-
-
 // A standalone example if you ever need a “/user” endpoint:
 Route::get('/user', function (Request $request) {
     return $request->user();

@@ -2,18 +2,24 @@
 
 namespace App\Models\Vendor;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class VendorApproval extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'vendor_id',
-        'admin_id',
-        'action',
-        'notes'
+  protected $fillable = [
+    'vendor_id',
+    'admin_id',
+    'action',
+    'notes',
+    'rejection_reason'
+];
+
+    protected $casts = [
+        'action' => 'string',
     ];
 
     public function vendor()

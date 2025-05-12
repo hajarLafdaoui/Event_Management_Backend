@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Vendor\Vendor;
 use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
@@ -139,4 +140,5 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     {
         return $this->role === 'client';
     }
+    
 }
