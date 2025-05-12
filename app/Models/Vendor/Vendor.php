@@ -4,6 +4,7 @@ namespace App\Models\Vendor;
 
 use App\Models\User;
 use App\Models\BookingRequest;
+use App\Models\VendorPayment;
 use App\Models\Vendor\VendorCategory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -59,10 +60,17 @@ class Vendor extends Model
     {
         return $this->hasMany(VendorApproval::class);
     }
+    
     public function bookingRequests()
     {
         return $this->hasMany(BookingRequest::class, 'vendor_id');
     }
+
+    public function payments()
+    {
+    return $this->hasMany(VendorPayment::class, 'vendor_id');
+    }
+
     // Accessor for full address
     public function getFullAddressAttribute()
     {

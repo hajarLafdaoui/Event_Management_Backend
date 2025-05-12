@@ -49,4 +49,8 @@ class BookingRequest extends Model
     {
         return $this->belongsTo(VendorPricingPackage::class);
     }
+    public function payments()
+    {
+    return $this->hasMany(VendorPayment::class, 'booking_id');
+    }
 }
