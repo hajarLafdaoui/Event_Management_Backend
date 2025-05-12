@@ -172,5 +172,16 @@ Route::prefix('event-tasks')->middleware('auth:api')->group(function () {
     Route::put('/{eventTask}', [EventTaskController::class, 'update']);
     Route::delete('/{eventTask}', [EventTaskController::class, 'destroy']);
     Route::post('/generate-from-template/{taskTemplate}', [EventTaskController::class, 'generateFromTemplate']);
+
+//--- BOOKING & PAYMENT SYSTEM ---//
+// Booking Request Routes
+Route::prefix('booking-requests')->middleware('auth:api')->group(function () {
+    Route::get('/', [BookingRequestController::class, 'index']);// Get a list of all booking requests
+    Route::post('/', [BookingRequestController::class, 'store']);// Create a new booking request
+    Route::get('/{id}', [BookingRequestController::class, 'show']);// Get a specific booking request by ID
+    Route::put('/{id}', [BookingRequestController::class, 'update']);// Update an existing booking request by ID
+    Route::delete('/{id}', [BookingRequestController::class, 'destroy']);// Delete a booking request by ID
+});
+
 });
 

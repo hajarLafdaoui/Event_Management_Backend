@@ -25,4 +25,9 @@ class VendorPricingPackage extends Model
     {
         return $this->belongsTo(VendorService::class, 'vendor_service_id');
     }
+    
+    public function bookingRequests()
+    {
+        return $this->hasMany(BookingRequest::class, 'package_id');
+    }
 }
