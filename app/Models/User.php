@@ -10,6 +10,7 @@ use App\Models\TaskTemplate;
 use App\Models\EventType;
 use App\Models\Event;
 use App\Models\Message;
+use App\Models\VendorReview;
 
 use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -142,6 +143,12 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     {
         return $this->hasMany(Message::class, 'receiver_id');
     }
+
+    public function reviewsGiven()
+    {
+        return $this->hasMany(VendorReview::class, 'client_id');
+    }
+
 
     // Helper methods
     public function getFullNameAttribute()

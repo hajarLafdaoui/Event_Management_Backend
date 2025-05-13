@@ -7,6 +7,7 @@ use App\Models\Vendor\VendorApproval;
 use App\Models\BookingRequest;
 use App\Models\VendorPayment;
 use App\Models\Vendor\VendorCategory;
+use App\Models\VendorReview;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -72,7 +73,11 @@ class Vendor extends Model
     {
     return $this->hasMany(VendorPayment::class, 'vendor_id');
     }
-
+    public function reviews()
+    {
+        return $this->hasMany(VendorReview::class, 'vendor_id');
+    }
+    
     // Accessor for full address
     public function getFullAddressAttribute()
     {

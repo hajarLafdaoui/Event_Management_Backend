@@ -3,9 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\VendorPayment;
-use App\Models\BookingRequest;
-use App\Models\User;
-use App\Models\Vendor\Vendor;
 use Illuminate\Http\Request;
 
 class VendorPaymentController extends Controller

@@ -225,5 +225,14 @@ Route::prefix('messages')->middleware('auth:api')->group(function () {
     Route::put('/{id}', [MessageController::class, 'update']); // Update a message by ID
     Route::delete('/{id}', [MessageController::class, 'destroy']); // Delete a message by ID
 });
+// Vendor Reviews Routes
+Route::prefix('vendor-reviews')->middleware('auth:api')->group(function () {
+    Route::get('/', [VendorReviewController::class, 'index']); // Get all reviews
+    Route::get('/{id}', [VendorReviewController::class, 'show']); // Get a single review by ID
+    Route::post('/', [VendorReviewController::class, 'store']); // Create a new review
+    Route::put('/{id}', [VendorReviewController::class, 'update']); // Update a review by ID
+    Route::delete('/{id}', [VendorReviewController::class, 'destroy']); // Delete a review by ID
+});
+
 
 

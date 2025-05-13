@@ -10,6 +10,7 @@ use App\Models\Vendor\VendorService;
 use App\Models\Vendor\VendorPricingPackage;
 use App\Models\VendorPayment;
 use App\Models\Message;
+use App\Models\VendorReview;
 
 class BookingRequest extends Model
 {
@@ -60,6 +61,10 @@ class BookingRequest extends Model
     public function messages()
     {
         return $this->hasMany(Message::class, 'related_booking_id');
+    }
+    public function review()
+    {
+        return $this->hasOne(VendorReview::class, 'booking_id');
     }
 
 }
