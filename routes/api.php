@@ -12,6 +12,8 @@ use App\Http\Controllers\EventTemplateController;
 use App\Http\Controllers\BookingRequestController;
 use App\Http\Controllers\VendorPaymentController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\VendorReviewController;
+use App\Http\Controllers\EmailTemplateController;
 
 
 use App\Http\Controllers\Vendor\VendorController;
@@ -225,6 +227,7 @@ Route::prefix('messages')->middleware('auth:api')->group(function () {
     Route::put('/{id}', [MessageController::class, 'update']); // Update a message by ID
     Route::delete('/{id}', [MessageController::class, 'destroy']); // Delete a message by ID
 });
+
 // Vendor Reviews Routes
 Route::prefix('vendor-reviews')->middleware('auth:api')->group(function () {
     Route::get('/', [VendorReviewController::class, 'index']); // Get all reviews
@@ -234,5 +237,13 @@ Route::prefix('vendor-reviews')->middleware('auth:api')->group(function () {
     Route::delete('/{id}', [VendorReviewController::class, 'destroy']); // Delete a review by ID
 });
 
+// Email Template Routes
+Route::prefix('email-templates')->middleware('auth:api')->group(function () {
+    Route::get('/', [EmailTemplateController::class, 'index'])->middleware('role:admin');// View all templates (accessible to admins only)
+    Route::get('/{id}', [EmailTemplateController::class, 'show']);// Show a specific template
+    Route::post('/', [EmailTemplateController::class, 'store'])->middleware('role:admin');// Create a new template (accessible to admins only)
+    Route::put('/{id}', [EmailTemplateController::class, 'update'])->middleware('role:admin');// Update a template (accessible to admins only)
+    Route::delete('/{id}', [EmailTemplateController::class, 'destroy'])->middleware('role:admin');// Delete a template (accessible to admins only)
+});
 
 
