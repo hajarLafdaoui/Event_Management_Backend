@@ -11,6 +11,8 @@ use App\Http\Controllers\TaskTemplateController;
 use App\Http\Controllers\EventTemplateController;
 use App\Http\Controllers\BookingRequestController;
 use App\Http\Controllers\VendorPaymentController;
+use App\Http\Controllers\MessageController;
+
 
 use App\Http\Controllers\Vendor\VendorController;
 use App\Http\Controllers\Auth\VerifyEmailController;
@@ -205,13 +207,23 @@ Route::prefix('booking-requests')->middleware('auth:api')->group(function () {
     Route::put('/{id}', [BookingRequestController::class, 'update']);// Update an existing booking request by ID
     Route::delete('/{id}', [BookingRequestController::class, 'destroy']);// Delete a booking request by ID
 });
+
 // Vendor Payment Routes
-Route::prefix('vendor-payments')->group(function () {
+Route::prefix('vendor-payments')->middleware('auth:api')->group(function () {
     Route::get('/', [VendorPaymentController::class, 'index']);  // Get all vendor payments
     Route::post('/', [VendorPaymentController::class, 'store']);  // Store a new vendor payment
     Route::get('{payment_id}', [VendorPaymentController::class, 'show']);  // Get a specific vendor payment
     Route::put('{payment_id}', [VendorPaymentController::class, 'update']);  // Update a specific vendor payment
     Route::delete('{payment_id}', [VendorPaymentController::class, 'destroy']);  // Delete a specific vendor payment
+});
+
+// Message Routes
+Route::prefix('messages')->middleware('auth:api')->group(function () {
+    Route::get('/', [MessageController::class, 'index']); // Get all messages
+    Route::post('/', [MessageController::class, 'store']); // Create a new message
+    Route::get('/{id}', [MessageController::class, 'show']); // Get a specific message by ID
+    Route::put('/{id}', [MessageController::class, 'update']); // Update a message by ID
+    Route::delete('/{id}', [MessageController::class, 'destroy']); // Delete a message by ID
 });
 
 

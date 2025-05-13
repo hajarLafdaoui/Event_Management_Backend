@@ -4,6 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\EventTemplate;
+use App\Models\User;
+use App\Models\Event;
+use App\Models\TaskTemplate;
 
 class EventType extends Model
 {

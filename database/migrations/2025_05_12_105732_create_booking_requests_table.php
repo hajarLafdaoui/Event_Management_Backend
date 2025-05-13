@@ -11,9 +11,9 @@ return new class extends Migration
         Schema::create('booking_requests', function (Blueprint $table) {
             $table->id('booking_id');
             $table->foreignId('event_id')->constrained('events','event_id')->cascadeOnDelete();
-            $table->foreignId('vendor_id')->constrained('vendors')->cascadeOnDelete();
-            $table->foreignId('service_id')->constrained('vendor_services')->cascadeOnDelete();
-            $table->foreignId('package_id')->nullable()->constrained('vendor_pricing_packages')->cascadeOnDelete();
+            $table->foreignId('vendor_id')->constrained('vendors');
+            $table->foreignId('service_id')->constrained('vendor_services');
+            $table->foreignId('package_id')->nullable()->constrained('vendor_pricing_packages');
             $table->date('requested_date');
             $table->time('start_time')->nullable();
             $table->time('end_time')->nullable();

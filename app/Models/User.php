@@ -3,6 +3,14 @@
 namespace App\Models;
 
 use App\Models\Vendor\Vendor;
+use App\Models\VendorPayment;
+use App\Models\EventTemplate;
+use App\Models\EventTask;
+use App\Models\TaskTemplate;
+use App\Models\EventType;
+use App\Models\Event;
+use App\Models\Message;
+
 use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Notifications\Notifiable;
@@ -119,11 +127,22 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     {
         return $this->hasOne(Vendor::class);
     }
+
     public function payments()
     {
         return $this->hasMany(VendorPayment::class, 'client_id');
     }
-    
+
+    public function sentMessages()
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+
+    public function receivedMessages()
+    {
+        return $this->hasMany(Message::class, 'receiver_id');
+    }
+
     // Helper methods
     public function getFullNameAttribute()
     {

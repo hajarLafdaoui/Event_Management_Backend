@@ -8,6 +8,8 @@ use App\Models\Event;
 use App\Models\Vendor\Vendor;
 use App\Models\Vendor\VendorService;
 use App\Models\Vendor\VendorPricingPackage;
+use App\Models\VendorPayment;
+use App\Models\Message;
 
 class BookingRequest extends Model
 {
@@ -49,8 +51,15 @@ class BookingRequest extends Model
     {
         return $this->belongsTo(VendorPricingPackage::class);
     }
+
     public function payments()
     {
     return $this->hasMany(VendorPayment::class, 'booking_id');
     }
+
+    public function messages()
+    {
+        return $this->hasMany(Message::class, 'related_booking_id');
+    }
+
 }

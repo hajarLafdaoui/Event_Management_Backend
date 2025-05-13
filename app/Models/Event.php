@@ -4,6 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\EventType;
+use App\Models\EventTemplate;
+use App\Models\EventTask;
+use App\Models\BookingRequest;
+use App\Models\User;
 
 class Event extends Model
 {
