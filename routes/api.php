@@ -14,6 +14,7 @@ use App\Http\Controllers\VendorPaymentController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\VendorReviewController;
 use App\Http\Controllers\EmailTemplateController;
+use App\Http\Controllers\EventGalleryController;
 
 
 use App\Http\Controllers\Vendor\VendorController;
@@ -246,4 +247,12 @@ Route::prefix('email-templates')->middleware('auth:api')->group(function () {
     Route::delete('/{id}', [EmailTemplateController::class, 'destroy'])->middleware('role:admin');// Delete a template (accessible to admins only)
 });
 
+// Event Gallery Routes
+Route::prefix('events/{event}/gallery')->middleware('auth:api')->group(function () {
+    Route::get('/', [EventGalleryController::class, 'index']);        // List all gallery items for an event
+    Route::post('/', [EventGalleryController::class, 'store']);       // Upload a new image/media
+    Route::get('/{gallery}', [EventGalleryController::class, 'show']); // View a specific gallery item
+    Route::put('/{gallery}', [EventGalleryController::class, 'update']); // Update a gallery item
+    Route::delete('/{gallery}', [EventGalleryController::class, 'destroy']); // Delete a gallery item
+});
 
