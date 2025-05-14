@@ -10,6 +10,7 @@ use App\Models\EventTask;
 use App\Models\BookingRequest;
 use App\Models\User;
 use App\Models\EventGallery;
+use App\Models\EventDocument;
 
 class Event extends Model
 {
@@ -72,5 +73,9 @@ class Event extends Model
         return $this->hasMany(EventGallery::class, 'event_id', 'event_id');
     }
 
+    public function documents()
+    {
+        return $this->hasMany(EventDocument::class, 'event_id');
+    }
     
 }

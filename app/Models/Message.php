@@ -21,17 +21,17 @@ class Message extends Model
         'read_at',
     ];
 
-    public function sender(): BelongsTo
+    public function sender()
     {
         return $this->belongsTo(User::class, 'sender_id');
     }
 
-    public function receiver(): BelongsTo
+    public function receiver()
     {
         return $this->belongsTo(User::class, 'receiver_id');
     }
 
-    public function booking(): BelongsTo
+    public function booking()
     {
         return $this->belongsTo(BookingRequest::class, 'related_booking_id');
     }

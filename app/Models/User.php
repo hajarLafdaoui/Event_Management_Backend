@@ -13,6 +13,7 @@ use App\Models\Message;
 use App\Models\VendorReview;
 use App\Models\EmailTemplate;
 use App\Models\EventGallery;
+use App\Models\EventDocument;
 
 use Laravel\Sanctum\HasApiTokens;
 use Tymon\JWTAuth\Contracts\JWTSubject;
@@ -159,6 +160,11 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
     public function uploadedMedia()
     {
         return $this->hasMany(EventGallery::class, 'uploader_id');
+    }
+
+    public function uploadedDocuments()
+    {
+        return $this->hasMany(EventDocument::class, 'uploader_id');
     }
 
     // Helper methods

@@ -19,7 +19,8 @@ class EventGallery extends Model
         'uploaded_at',
     ];
 
-
+    public $timestamps = false;
+    
     // Relationships
     public function event()
     {

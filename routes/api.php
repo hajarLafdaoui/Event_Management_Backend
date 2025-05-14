@@ -15,6 +15,7 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\VendorReviewController;
 use App\Http\Controllers\EmailTemplateController;
 use App\Http\Controllers\EventGalleryController;
+use App\Http\Controllers\EventDocumentController;
 
 
 use App\Http\Controllers\Vendor\VendorController;
@@ -256,3 +257,12 @@ Route::prefix('events/{event}/gallery')->middleware('auth:api')->group(function 
     Route::delete('/{gallery}', [EventGalleryController::class, 'destroy']); // Delete a gallery item
 });
 
+// Event Documents Routes
+Route::prefix('event-documents')->middleware('auth:api')->group(function () {
+    
+    Route::get('/', [EventDocumentController::class, 'index']);// Get all event documents
+    Route::post('/', [EventDocumentController::class, 'store']);// Create a new event document
+    Route::get('/{id}', [EventDocumentController::class, 'show']);// Get a specific event document by ID
+    Route::put('/{id}', [EventDocumentController::class, 'update']);// Update a specific event document by ID
+    Route::delete('/{id}', [EventDocumentController::class, 'destroy']);// Delete a specific event document by ID
+});
