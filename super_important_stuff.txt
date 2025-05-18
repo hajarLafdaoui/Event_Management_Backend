@@ -28,4 +28,7 @@ php artisan make:migration create_password_resets_table
 composer require laravel/socialite
 composer require google/apiclient:^2.0
 
-//29/04
+//
+
+18/5
+composer remove maatwebsite/excel phpoffice/phpexcel

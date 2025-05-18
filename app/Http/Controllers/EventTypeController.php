@@ -8,11 +8,11 @@ use Illuminate\Support\Facades\Auth;
 
 class EventTypeController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth:api');
-        $this->middleware('role:admin')->except(['index']);
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware('auth:api');
+    //     $this->middleware('role:admin')->except(['index']);
+    // }
 
     public function index()
     {

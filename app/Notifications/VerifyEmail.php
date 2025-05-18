@@ -35,3 +35,4 @@ class VerifyEmail extends Notification
                sha1($notifiable->getEmailForVerification());
     }
 }
+

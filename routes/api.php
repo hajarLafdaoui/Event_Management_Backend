@@ -5,20 +5,22 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\EventTaskController;
 use App\Http\Controllers\EventTypeController;
+use App\Http\Controllers\GuestListController;
+use App\Http\Controllers\InvitationController;
+use App\Http\Controllers\EventGalleryController;
 use App\Http\Controllers\TaskTemplateController;
-use App\Http\Controllers\EventTemplateController;
-use App\Http\Controllers\BookingRequestController;
-use App\Http\Controllers\VendorPaymentController;
-use App\Http\Controllers\MessageController;
 use App\Http\Controllers\VendorReviewController;
 use App\Http\Controllers\EmailTemplateController;
-use App\Http\Controllers\EventGalleryController;
 use App\Http\Controllers\EventDocumentController;
+use App\Http\Controllers\EventTemplateController;
 
 
 use App\Http\Controllers\Vendor\VendorController;
+use App\Http\Controllers\VendorPaymentController;
+use App\Http\Controllers\BookingRequestController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use App\Http\Controllers\Vendor\VendorServiceController;
 use App\Http\Controllers\Vendor\VendorApprovalController;
@@ -27,6 +29,10 @@ use App\Http\Controllers\vendor\VendorPortfolioController;
 use App\Http\Controllers\Vendor\VendorAvailabilityController;
 use App\Http\Controllers\Vendor\VendorPricingPackageController;
 
+// {
+//   "email": "john@example.com",
+//   "password": "password123"
+// }
 
 // ─────────────────────────────────────────────────
 // Public auth & verification
@@ -266,3 +272,21 @@ Route::prefix('event-documents')->middleware('auth:api')->group(function () {
     Route::put('/{id}', [EventDocumentController::class, 'update']);// Update a specific event document by ID
     Route::delete('/{id}', [EventDocumentController::class, 'destroy']);// Delete a specific event document by ID
 });
+
+ 
+// Guest management routes
+Route::prefix('events/{eventId}/guests')->group(function () {
+    Route::get('/', [GuestListController::class, 'index']);
+    Route::post('/', [GuestListController::class, 'store']);
+    Route::post('/import', [GuestListController::class, 'import']);
+    Route::put('/{guestId}', [GuestListController::class, 'update']);
+    Route::delete('/{guestId}', [GuestListController::class, 'destroy']);
+});
+
+// Invitation routes
+Route::prefix('events/{eventId}/invitations')->group(function () {
+    Route::post('/send', [InvitationController::class, 'sendInvitations']);
+});
+
+// Public RSVP route (no auth required)
+Route::post('/rsvp/{token}', [InvitationController::class, 'handleRSVP']);

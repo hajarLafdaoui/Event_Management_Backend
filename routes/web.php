@@ -25,3 +25,9 @@ Route::get('/', function () {
 // // Handle reset password form submission (POST request)
 // Route::post('/reset-password', [AuthController::class, 'resetPassword'])
 //      ->name('password.update');
+
+// Invitation handling routes
+// Route::get('invitation/rsvp/{token}', [InvitationViewController::class, 'showRSVPForm'])->name('invitation.rsvp');
+// Route::post('invitation/rsvp/{token}', [InvitationViewController::class, 'handleRSVP'])->name('invitation.rsvp.submit');
+// Route::get('invitation/ticket/{token}', [InvitationViewController::class, 'showTicket'])->name('invitation.ticket');
+// Route::get('invitation/ticket/verify/{token}', [InvitationViewController::class, 'verifyTicket'])->name('invitation.ticket.verify');

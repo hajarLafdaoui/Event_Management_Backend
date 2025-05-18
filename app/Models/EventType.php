@@ -13,6 +13,8 @@ class EventType extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $primaryKey = 'event_type_id';
     protected $fillable = [
         'type_name',
