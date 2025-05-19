@@ -8,12 +8,6 @@ use Illuminate\Support\Facades\Auth;
 
 class EventTypeController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth:api');
-        $this->middleware('role:admin')->except(['index']);
-    }
-
     public function index()
     {
         $eventTypes = EventType::where('is_active', true)->get();
@@ -51,6 +45,6 @@ class EventTypeController extends Controller
     public function destroy(EventType $eventType)
     {
         $eventType->delete();
-        return response()->json(null, 204);
+         return response()->json(['message' => 'Event type deleted successfully.'], 200);
     }
 }
