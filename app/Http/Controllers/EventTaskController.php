@@ -10,10 +10,6 @@ use Illuminate\Support\Facades\Auth;
 
 class EventTaskController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth:api');
-    }
 
     public function index(Request $request)
     {
@@ -65,15 +61,15 @@ class EventTaskController extends Controller
         return response()->json($task->load(['event', 'template']), 201);
     }
 
-    public function show(EventTask $task)
+    public function show($id)
     {
-        $this->authorize('view', $task);
-        return response()->json($task->load(['event', 'user', 'template']));
+         $task = EventTask::with(['event', 'user', 'template'])->findOrFail($id);
+        return response()->json($task);
     }
 
-    public function update(Request $request, EventTask $task)
+    public function update(Request $request,  $id)
     {
-        $this->authorize('update', $task);
+        $task = EventTask::findOrFail($id);
         
         $validated = $request->validate([
             'task_name' => 'sometimes|string|max:255',
@@ -92,11 +88,11 @@ class EventTaskController extends Controller
         return response()->json($task->load(['event', 'template']));
     }
 
-    public function destroy(EventTask $task)
+    public function destroy($id)
     {
-        $this->authorize('delete', $task);
+        $task = EventTask::findOrFail($id);
         $task->delete();
-        return response()->json(null, 204);
+         return response()->json(['message' => 'event task deleted successfully.'], 200);
     }
 
     public function generateFromTemplate(Request $request, TaskTemplate $template)

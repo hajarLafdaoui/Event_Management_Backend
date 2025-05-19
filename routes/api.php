@@ -195,9 +195,9 @@ Route::prefix('task-templates')->middleware('auth:api')->group(function () {
 Route::prefix('event-tasks')->middleware('auth:api')->group(function () {
     Route::get('/', [EventTaskController::class, 'index']);
     Route::post('/', [EventTaskController::class, 'store']);
-    Route::get('/{eventTask}', [EventTaskController::class, 'show']);
-    Route::put('/{eventTask}', [EventTaskController::class, 'update']);
-    Route::delete('/{eventTask}', [EventTaskController::class, 'destroy']);
+    Route::get('/{id}', [EventTaskController::class, 'show']);
+    Route::put('/{id}', [EventTaskController::class, 'update']);
+    Route::delete('/{id}', [EventTaskController::class, 'destroy']);
     Route::post('/generate-from-template/{taskTemplate}', [EventTaskController::class, 'generateFromTemplate']);
 });
 
