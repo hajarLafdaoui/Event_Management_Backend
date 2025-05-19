@@ -185,9 +185,9 @@ Route::prefix('events')->middleware('auth:api')->group(function () {
 Route::prefix('task-templates')->middleware('auth:api')->group(function () {
     Route::get('/', [TaskTemplateController::class, 'index']);
     Route::post('/', [TaskTemplateController::class, 'store'])->middleware('role:admin');
-    Route::get('/{taskTemplate}', [TaskTemplateController::class, 'show']);
-    Route::put('/{taskTemplate}', [TaskTemplateController::class, 'update'])->middleware('role:admin');
-    Route::delete('/{taskTemplate}', [TaskTemplateController::class, 'destroy'])->middleware('role:admin');
+    Route::get('/{id}', [TaskTemplateController::class, 'show']);
+    Route::put('/{id}', [TaskTemplateController::class, 'update'])->middleware('role:admin');
+    Route::delete('/{id}', [TaskTemplateController::class, 'destroy'])->middleware('role:admin');
     Route::post('/generate-with-ai', [TaskTemplateController::class, 'generateWithAI'])->middleware('role:admin');
 });
 
