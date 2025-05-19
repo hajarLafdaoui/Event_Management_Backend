@@ -10,12 +10,6 @@ use OpenAI\Laravel\Facades\OpenAI;
 
 class EventTemplateController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth:api');
-        $this->middleware('role:admin')->except(['index', 'show']);
-    }
-
     public function index()
     {
         $templates = EventTemplate::with('eventType')->get();
@@ -62,7 +56,7 @@ class EventTemplateController extends Controller
     public function destroy(EventTemplate $template)
     {
         $template->delete();
-        return response()->json(null, 204);
+       return response()->json(['message' => 'Event template deleted successfully.'], 200);
     }
 
     public function generateWithAI(Request $request)
