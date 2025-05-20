@@ -17,12 +17,11 @@ return new class extends Migration
             $table->string('template_subject');
             $table->text('template_body');
             $table->boolean('is_system_template')->default(true);
-            $table->foreignId('created_by_admin_id')
-                                        ->nullable() // 🔧 Fix: make it nullable
 
-                  ->constrained('users') // Refers to the default 'id' column in 'users' table
-
-                  ->onDelete('set null'); // Set to null if the user is deleted
+             $table->foreignId('created_by_admin_id')
+                    ->nullable() // ← Required for SET NULL to work
+                    ->constrained('users')
+                    ->nullOnDelete(); // More readable
             $table->timestamps(); // Includes 'created_at' and 'updated_at'
         });
     }

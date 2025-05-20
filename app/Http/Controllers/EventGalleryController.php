@@ -45,45 +45,58 @@ class EventGalleryController extends Controller
     }
 
     // Show event gallery media by event ID
-    public function show($eventId)
+    public function show($eventId ,$galleryId)
     {
-        $eventGallery = EventGallery::where('event_id', $eventId)->get();
+        $media = EventGallery::where('id', $galleryId)->where('event_id', $eventId)->first();
 
-        if ($eventGallery->isEmpty()) {
-            return response()->json(['message' => 'No media found for this event.'], 404);
-        }
+    if (!$media) {
+        return response()->json(['message' => 'Media not found.'], 404);
+    }
 
-        return response()->json($eventGallery);
+    return response()->json($media);
     }
 
     // Update existing event gallery media
-    public function update(Request $request, $id)
-    {
-        $eventGallery = EventGallery::findOrFail($id);
+    public function update(Request $request, $eventId, $galleryId)
+{
+    $eventGallery = EventGallery::where('id', $galleryId)
+                                ->where('event_id', $eventId)
+                                ->first();
 
-        $request->validate([
-            'media_url' => 'required|string',
-            'media_type' => 'required|in:image,video',
-            'caption' => 'nullable|string',
-        ]);
-
-        $eventGallery->update([
-            'media_url' => $request->media_url,
-            'media_type' => $request->media_type,
-            'caption' => $request->caption,
-        ]);
-
-        return response()->json($eventGallery);
+    if (!$eventGallery) {
+        return response()->json(['message' => 'Media not found for this event.'], 404);
     }
+
+    $request->validate([
+        'media_url' => 'required|string',
+        'media_type' => 'required|in:image,video',
+        'caption' => 'nullable|string',
+    ]);
+
+    $eventGallery->update([
+        'media_url' => $request->media_url,
+        'media_type' => $request->media_type,
+        'caption' => $request->caption,
+    ]);
+
+    return response()->json($eventGallery);
+}
 
     // Delete event gallery media
-    public function destroy($id)
-    {
-        $eventGallery = EventGallery::findOrFail($id);
-        $eventGallery->delete();
+    public function destroy($eventId, $galleryId)
+{
+    $eventGallery = EventGallery::where('id', $galleryId)
+                                ->where('event_id', $eventId)
+                                ->first();
 
-        return response()->json(['message' => 'Media deleted successfully.']);
+    if (!$eventGallery) {
+        return response()->json(['message' => 'Media not found for this event.'], 404);
     }
+
+    $eventGallery->delete();
+
+    return response()->json(['message' => 'Media deleted successfully.']);
+}
 
     
 

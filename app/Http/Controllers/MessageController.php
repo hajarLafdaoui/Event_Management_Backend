@@ -31,6 +31,7 @@ class MessageController extends Controller
         return response()->json($message, 201);
     }
 
+
     public function show($id)
     {
         $message = Message::with(['sender', 'receiver', 'booking'])->find($id);
@@ -67,6 +68,6 @@ class MessageController extends Controller
         $message = Message::findOrFail($id);
         $message->delete();
 
-        return response()->json(null, 204);
+        return response()->json(['message' => 'Message  deleted successfully.'], 200);
     }
 }

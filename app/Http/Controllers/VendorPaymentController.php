@@ -20,7 +20,7 @@ class VendorPaymentController extends Controller
         $validated = $request->validate([
             'booking_id' => 'required|exists:booking_requests,booking_id',
             'client_id' => 'required|exists:users,id',
-            'vendor_id' => 'required|exists:vendors,vendor_id',
+            'vendor_id' => 'required|exists:vendors,id',
             'amount' => 'required|numeric',
             'payment_method' => 'required|in:stripe,paypal',
             'transaction_id' => 'nullable|string|max:255',
@@ -50,7 +50,7 @@ class VendorPaymentController extends Controller
         $validated = $request->validate([
             'booking_id' => 'required|exists:booking_requests,booking_id',
             'client_id' => 'required|exists:users,id',
-            'vendor_id' => 'required|exists:vendors,vendor_id',
+            'vendor_id' => 'required|exists:vendors,id',
             'amount' => 'required|numeric',
             'payment_method' => 'required|in:stripe,paypal',
             'transaction_id' => 'nullable|string|max:255',

@@ -191,9 +191,9 @@ Route::prefix('events')->middleware('auth:api')->group(function () {
 Route::prefix('task-templates')->middleware('auth:api')->group(function () {
     Route::get('/', [TaskTemplateController::class, 'index']);
     Route::post('/', [TaskTemplateController::class, 'store'])->middleware('role:admin');
-    Route::get('/{taskTemplate}', [TaskTemplateController::class, 'show']);
-    Route::put('/{taskTemplate}', [TaskTemplateController::class, 'update'])->middleware('role:admin');
-    Route::delete('/{taskTemplate}', [TaskTemplateController::class, 'destroy'])->middleware('role:admin');
+    Route::get('/{id}', [TaskTemplateController::class, 'show']);
+    Route::put('/{id}', [TaskTemplateController::class, 'update'])->middleware('role:admin');
+    Route::delete('/{id}', [TaskTemplateController::class, 'destroy'])->middleware('role:admin');
     Route::post('/generate-with-ai', [TaskTemplateController::class, 'generateWithAI'])->middleware('role:admin');
 });
 
@@ -201,9 +201,9 @@ Route::prefix('task-templates')->middleware('auth:api')->group(function () {
 Route::prefix('event-tasks')->middleware('auth:api')->group(function () {
     Route::get('/', [EventTaskController::class, 'index']);
     Route::post('/', [EventTaskController::class, 'store']);
-    Route::get('/{eventTask}', [EventTaskController::class, 'show']);
-    Route::put('/{eventTask}', [EventTaskController::class, 'update']);
-    Route::delete('/{eventTask}', [EventTaskController::class, 'destroy']);
+    Route::get('/{id}', [EventTaskController::class, 'show']);
+    Route::put('/{id}', [EventTaskController::class, 'update']);
+    Route::delete('/{id}', [EventTaskController::class, 'destroy']);
     Route::post('/generate-from-template/{taskTemplate}', [EventTaskController::class, 'generateFromTemplate']);
 });
 
@@ -256,12 +256,13 @@ Route::prefix('email-templates')->middleware('auth:api')->group(function () {
 
 // Event Gallery Routes
 Route::prefix('events/{event}/gallery')->middleware('auth:api')->group(function () {
-    Route::get('/', [EventGalleryController::class, 'index']);        // List all gallery items for an event
-    Route::post('/', [EventGalleryController::class, 'store']);       // Upload a new image/media
-    Route::get('/{gallery}', [EventGalleryController::class, 'show']); // View a specific gallery item
-    Route::put('/{gallery}', [EventGalleryController::class, 'update']); // Update a gallery item
-    Route::delete('/{gallery}', [EventGalleryController::class, 'destroy']); // Delete a gallery item
+    Route::get('/', [EventGalleryController::class, 'index']);               // List all gallery items for an event
+    Route::post('/', [EventGalleryController::class, 'store']);              // Upload new media
+    Route::get('/{gallery}', [EventGalleryController::class, 'show']);       // View specific gallery item
+    Route::put('/{gallery}', [EventGalleryController::class, 'update']);     // Update gallery item
+    Route::delete('/{gallery}', [EventGalleryController::class, 'destroy']); // Delete gallery item
 });
+
 
 // Event Documents Routes
 Route::prefix('event-documents')->middleware('auth:api')->group(function () {

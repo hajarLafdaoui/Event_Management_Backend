@@ -11,6 +11,7 @@ use App\Models\User;
 class Message extends Model
 {
     use HasFactory;
+
     
     protected $fillable = [
         'sender_id',
@@ -20,6 +21,7 @@ class Message extends Model
         'is_read',
         'read_at',
     ];
+    public $timestamps = true;
 
     public function sender()
     {

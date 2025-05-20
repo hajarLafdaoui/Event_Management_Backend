@@ -9,7 +9,7 @@ use App\Models\Event;
 class EventGallery extends Model
 {
     use HasFactory;
-
+    protected $table = 'event_gallery';
     protected $fillable = [
         'event_id',
         'uploader_id',

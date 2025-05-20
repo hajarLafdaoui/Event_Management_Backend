@@ -11,10 +11,6 @@ use OpenAI\Laravel\Facades\OpenAI;
 
 class EventController extends Controller
 {
-    // public function __construct()
-    // {
-    //     $this->middleware('auth:api');
-    // }
 
     public function index()
     {
@@ -131,7 +127,7 @@ class EventController extends Controller
         }
 
         $event->delete();
-        return response()->json(null, 204);
+        return response()->json(['message' => 'Event  deleted successfully.'], 200);
     }
 
     public function generateFromTemplate(Request $request, EventTemplate $template)

@@ -11,7 +11,7 @@ use App\Models\Event;
 class EventTemplate extends Model
 {
     use HasFactory;
-
+    public $timestamps = false;
     protected $primaryKey = 'template_id';
     protected $fillable = [
         'event_type_id',
