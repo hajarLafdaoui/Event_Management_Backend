@@ -11,7 +11,7 @@ use App\Models\User;
 class VendorReview extends Model
 {
     use HasFactory;
-
+    protected $table = 'vendor_reviews';
     protected $fillable = [
         'vendor_id',
         'client_id',
@@ -20,7 +20,7 @@ class VendorReview extends Model
         'review_text',
         'is_approved',
     ];
-
+    public $timestamps = false;
     // Relationships
     public function vendor()
     {

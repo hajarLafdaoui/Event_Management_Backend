@@ -9,7 +9,7 @@ class MessageController extends Controller
 {
     public function index()
     {
-        $messages = Message::all();
+        $messages = Message::with(['sender', 'receiver', 'booking'])->get();
 
         return response()->json([
             'status' => 'success',
@@ -17,9 +17,8 @@ class MessageController extends Controller
         ], 200);
     }
 
-   public function store(Request $request)
-{
-    try {
+    public function store(Request $request)
+    {
         $validated = $request->validate([
             'sender_id' => 'required|exists:users,id',
             'receiver_id' => 'required|exists:users,id',
@@ -29,26 +28,8 @@ class MessageController extends Controller
 
         $message = Message::create($validated);
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $message
-        ], 201);
-
-    } catch (\Illuminate\Validation\ValidationException $e) {
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Validation failed',
-            'errors' => $e->errors()
-        ], 422);
-
-    } catch (\Exception $e) {
-        return response()->json([
-            'status' => 'error',
-            'message' => 'Something went wrong',
-            'error' => $e->getMessage()
-        ], 500);
+        return response()->json($message, 201);
     }
-}
 
 
     public function show($id)
@@ -87,6 +68,6 @@ class MessageController extends Controller
         $message = Message::findOrFail($id);
         $message->delete();
 
-        return response()->json(null, 204);
+        return response()->json(['message' => 'Message  deleted successfully.'], 200);
     }
 }
