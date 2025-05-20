@@ -9,6 +9,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Models\EmailTemplate;
 use App\Notifications\EventInvitationNotification;
+use App\Notifications\FinalInvitationNotification;
 
 class InvitationController extends Controller
 {
@@ -140,6 +141,11 @@ class InvitationController extends Controller
             'response_notes' => $notes,
             'responded_at' => now()
         ]);
+
+        // Send final invitation if accepted
+        if ($status === 'accepted') {
+            $invitation->guest->notify(new FinalInvitationNotification($invitation->event, $invitation));
+        }
 
         return $invitation;
     }
