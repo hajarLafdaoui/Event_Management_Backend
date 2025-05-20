@@ -10,11 +10,7 @@ use OpenAI\Laravel\Facades\OpenAI;
 
 class EventTemplateController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware('auth:api');
-        $this->middleware('role:admin')->except(['index', 'show']);
-    }
+   
 
     public function index()
     {

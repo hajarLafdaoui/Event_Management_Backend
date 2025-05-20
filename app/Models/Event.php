@@ -17,6 +17,7 @@ class Event extends Model
     use HasFactory;
 
     protected $primaryKey = 'event_id';
+    
     protected $fillable = [
         'user_id',
         'event_type_id',
@@ -48,9 +49,18 @@ class Event extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
+    return $this->hasMany(GuestList::class, 'event_event_id');
     }
 
+    public function invitations()
+{
+    return $this->hasMany(Invitation::class);
+}
+
+public function guests()
+{
+    return $this->hasMany(GuestList::class, 'event_id', 'event_id');
+}
     public function eventType()
     {
         return $this->belongsTo(EventType::class, 'event_type_id');
