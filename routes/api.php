@@ -250,12 +250,13 @@ Route::prefix('email-templates')->middleware('auth:api')->group(function () {
 
 // Event Gallery Routes
 Route::prefix('events/{event}/gallery')->middleware('auth:api')->group(function () {
-    Route::get('/', [EventGalleryController::class, 'index']);        // List all gallery items for an event
-    Route::post('/', [EventGalleryController::class, 'store']);       // Upload a new image/media
-    Route::get('/{gallery}', [EventGalleryController::class, 'show']); // View a specific gallery item
-    Route::put('/{gallery}', [EventGalleryController::class, 'update']); // Update a gallery item
-    Route::delete('/{gallery}', [EventGalleryController::class, 'destroy']); // Delete a gallery item
+    Route::get('/', [EventGalleryController::class, 'index']);               // List all gallery items for an event
+    Route::post('/', [EventGalleryController::class, 'store']);              // Upload new media
+    Route::get('/{gallery}', [EventGalleryController::class, 'show']);       // View specific gallery item
+    Route::put('/{gallery}', [EventGalleryController::class, 'update']);     // Update gallery item
+    Route::delete('/{gallery}', [EventGalleryController::class, 'destroy']); // Delete gallery item
 });
+
 
 // Event Documents Routes
 Route::prefix('event-documents')->middleware('auth:api')->group(function () {
