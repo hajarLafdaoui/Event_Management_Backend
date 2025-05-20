@@ -29,6 +29,9 @@ class VendorPayment extends Model
         'client_id',
         'vendor_id',
     ];
+    
+    public $timestamps = false;
+
 
     // Define relationships
 
