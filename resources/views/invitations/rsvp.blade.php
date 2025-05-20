@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>RSVP for {{ $invitation->event->event_name }}</title>
+    <title>RSVP for {{ $invitation->event->event_name ?? 'Unknown Event' }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
@@ -11,10 +11,10 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header">
-                    <h2>RSVP for {{ $invitation->event->event_name }}</h2>
+                    <h2>RSVP for {{ $invitation->event->event_name ?? 'Unknown Event' }}</h2>
                 </div>
                 <div class="card-body">
-                    <p><strong>Date:</strong> {{ $invitation->event->start_datetime->format('F j, Y') }}</p>
+                    <p><strong>Date:</strong> {{ $invitation->event->start_datetime }}</p>
                     <p><strong>Location:</strong> {{ $invitation->event->location }}</p>
                     
                     @if($invitation->rsvp_status === 'pending')
