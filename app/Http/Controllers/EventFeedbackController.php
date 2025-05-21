@@ -40,4 +40,10 @@ class EventFeedbackController extends Controller
 
         return redirect()->back()->with('success', 'Thank you for your feedback!');
     }
+
+    public function eventFeedbacks($event_id)
+    {
+        $feedbacks = EventFeedback::where('event_id', $event_id)->with('guest')->get();
+        return response()->json($feedbacks);
+    }
 }

@@ -17,6 +17,6 @@ class EventFeedback extends Model
 
     public function guest()
     {
-        return $this->belongsTo(GuestList::class, 'guest_id', 'guest_id');
+        return $this->belongsTo(\App\Models\GuestList::class, 'guest_id', 'id');
     }
 }

@@ -15,9 +15,10 @@ use App\Http\Controllers\TaskTemplateController;
 use App\Http\Controllers\VendorReviewController;
 use App\Http\Controllers\EmailTemplateController;
 use App\Http\Controllers\EventDocumentController;
+use App\Http\Controllers\EventFeedbackController;
+
+
 use App\Http\Controllers\EventTemplateController;
-
-
 use App\Http\Controllers\Vendor\VendorController;
 use App\Http\Controllers\VendorPaymentController;
 use App\Http\Controllers\BookingRequestController;
@@ -290,5 +291,8 @@ Route::prefix('events/{eventId}/invitations')->group(function () {
     Route::post('/send', [InvitationController::class, 'sendInvitations']);
 
 });
+
+// For API
+Route::get('/events/{event_id}/feedbacks', [EventFeedbackController::class, 'eventFeedbacks'])->name('event.feedbacks');
 
 
