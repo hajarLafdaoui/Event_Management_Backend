@@ -35,7 +35,7 @@ class EventDocumentController extends Controller
 
         // Store file and get file path (this assumes the file is uploaded via the 'file' field)
         $file = $request->file('file');
-        $filePath = $file->store('event_documents');
+        $filePath = $file->store('event_documents', 'public');
 
         // Create new event document record
         $eventDocument = EventDocument::create([
@@ -63,55 +63,45 @@ class EventDocumentController extends Controller
     }
 
     // Update the specified resource in storage
-    public function update(Request $request, $id)
-    {
-        $eventDocument = EventDocument::find($id);
-        if (!$eventDocument) {
-            return response()->json(['message' => 'Document not found'], 404);
-        }
-
-        // Validate request data
-        $validator = Validator::make($request->all(), [
-            'event_id' => 'nullable|exists:events,event_id',
-            'uploader_id' => 'nullable|exists:users,id',
-            'file_url' => 'nullable|string|max:255',
-            'file_name' => 'nullable|string|max:255',
-            'file_type' => 'nullable|string|max:50',
-            'file_size' => 'nullable|integer',
-            'description' => 'nullable|string',
-            'uploaded_at' => 'nullable|date',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 400);
-        }
-
-        // If a new file is uploaded, delete the old file and store the new one
-        if ($request->hasFile('file')) {
-            // Delete the old file
-            Storage::delete($eventDocument->file_url);
-
-            // Store the new file
-            $file = $request->file('file');
-            $filePath = $file->store('event_documents');
-
-            // Update file details
-            $eventDocument->file_url = $filePath;
-            $eventDocument->file_name = $file->getClientOriginalName();
-            $eventDocument->file_type = $file->getClientMimeType();
-            $eventDocument->file_size = $file->getSize();
-        }
-
-        // Update other fields
-        $eventDocument->event_id = $request->event_id ?? $eventDocument->event_id;
-        $eventDocument->uploader_id = $request->uploader_id ?? $eventDocument->uploader_id;
-        $eventDocument->description = $request->description ?? $eventDocument->description;
-        $eventDocument->uploaded_at = $request->uploaded_at ?? now();
-
-        $eventDocument->save();
-
-        return response()->json($eventDocument);
+public function update(Request $request, $id)
+{
+    $eventDocument = EventDocument::find($id);
+    if (!$eventDocument) {
+        return response()->json(['message' => 'Document not found'], 404);
     }
+
+    \Log::info('Update request data:', $request->all());
+
+    $validator = Validator::make($request->all(), [
+        'file' => 'nullable|file|mimes:pdf,jpeg,png,docx|max:10240',
+        'description' => 'nullable|string',
+    ]);
+
+    if ($validator->fails()) {
+        return response()->json($validator->errors(), 400);
+    }
+
+    if ($request->hasFile('file')) {
+        if ($eventDocument->file_url) {
+            Storage::disk('public')->delete($eventDocument->file_url);
+        }
+        $file = $request->file('file');
+        $filePath = $file->store('event_documents', 'public');
+
+        $eventDocument->file_url = $filePath;
+        $eventDocument->file_name = $file->getClientOriginalName();
+        $eventDocument->file_type = $file->getClientMimeType();
+        $eventDocument->file_size = $file->getSize();
+    }
+
+    $eventDocument->description = $request->input('description', $eventDocument->description);
+
+    $eventDocument->uploaded_at = now();
+
+    $eventDocument->save();
+
+    return response()->json($eventDocument);
+}
 
     // Remove the specified resource from storage
     public function destroy($id)
