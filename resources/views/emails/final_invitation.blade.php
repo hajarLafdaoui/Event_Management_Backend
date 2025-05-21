@@ -11,6 +11,10 @@ Thank you for accepting the invitation! Here are the event details:
 
 We look forward to seeing you!
 
+@component('mail::button', ['url' => route('feedback.create', ['event_id' => $event->event_id, 'guest_id' => $invitation->guest->id])])
+Leave Feedback
+@endcomponent
+
 Thanks,<br>
 {{ config('app.name') }}
 @endcomponent

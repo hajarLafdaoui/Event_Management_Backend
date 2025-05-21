@@ -288,12 +288,7 @@ Route::prefix('events/{eventId}/guests')->group(function () {
 // // Invitation routes
 Route::prefix('events/{eventId}/invitations')->group(function () {
     Route::post('/send', [InvitationController::class, 'sendInvitations']);
-    // Route::get('/{token}', [InvitationController::class, 'showInvitation']);
 
 });
 
-
-// // Public routes for RSVP
-// Route::get('/rsvp/{token}', [InvitationController::class, 'handleRSVP']);
-Route::post('/rsvp/{token}', [InvitationController::class, 'processRSVP']);
 
