@@ -67,7 +67,7 @@ class EventController extends Controller
         }
 
         $event = Event::create($validated);
-
+        $event->load(['eventType', 'template']);
         return response()->json($event, 201);
     }
 
@@ -113,7 +113,7 @@ class EventController extends Controller
         ]);
 
         $event->update($validated);
-
+        $event->load(['eventType', 'template']);
         return response()->json($event);
     }
 
