@@ -23,41 +23,55 @@ use Illuminate\Support\Facades\Password;
 class AuthController extends Controller
 {
     // Register 
-    public function register(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'first_name' => 'nullable|string|max:100',
-            'last_name' => 'nullable|string|max:100',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-            'phone' => 'nullable|string|max:20',
-            'role' => 'required|in:client,vendor,admin',
-        ]);
+  public function register(Request $request)
+{
+    $validator = Validator::make($request->all(), [
+        'first_name' => 'nullable|string|max:100',
+        'last_name' => 'nullable|string|max:100',
+        'email' => 'required|string|email|max:255|unique:users',
+        'password' => 'required|string|min:8|confirmed',
+        'phone' => 'nullable|string|max:20',
+        'role' => 'required|in:client,vendor,admin',
+        'gender' => 'nullable|in:male,female,other,prefer_not_to_say',
+        'address' => 'nullable|string|max:255',
+        'city' => 'nullable|string|max:100',
+        'country' => 'nullable|string|max:100',
+        'facebook_url' => 'nullable|url|max:255',
+        'instagram_url' => 'nullable|url|max:255',
+        'tiktok_url' => 'nullable|url|max:255',
+    ]);
 
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
-        $user = User::create([
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => $request->role,
-            'phone' => $request->phone,
-        ]);
-
-        event(new Registered($user));
-
-        $token = JWTAuth::fromUser($user);
-
-        return response()->json([
-            'message' => 'User registered successfully. Please check your email to verify your account.',
-            'user' => $user,
-            'access_token' => $token,
-            'token_type' => 'Bearer',
-        ], 201);
+    if ($validator->fails()) {
+        return response()->json($validator->errors(), 422);
     }
+
+    $user = User::create([
+        'first_name' => $request->first_name,
+        'last_name' => $request->last_name,
+        'email' => $request->email,
+        'password' => Hash::make($request->password),
+        'role' => $request->role,
+        'phone' => $request->phone,
+        'gender' => $request->gender,
+        'address' => $request->address,
+        'city' => $request->city,
+        'country' => $request->country,
+        'facebook_url' => $request->facebook_url,
+        'instagram_url' => $request->instagram_url,
+        'tiktok_url' => $request->tiktok_url,
+    ]);
+
+    event(new Registered($user));
+
+    $token = JWTAuth::fromUser($user);
+
+    return response()->json([
+        'message' => 'User registered successfully. Please check your email to verify your account.',
+        'user' => $user,
+        'access_token' => $token,
+        'token_type' => 'Bearer',
+    ], 201);
+}
 
     // VERIFY EMAIL  AFTER REGISTRATION
     public function verifyEmail(Request $request, $id, $hash)
@@ -174,6 +188,13 @@ class AuthController extends Controller
             'last_name' => 'string|max:100',
             'phone' => 'string|max:20|nullable',
             'profile_picture' => 'nullable|string', // Only update if provided
+            'gender' => 'nullable|in:male,female,other,prefer_not_to_say',
+'address' => 'nullable|string|max:255',
+'city' => 'nullable|string|max:100',
+'country' => 'nullable|string|max:100',
+'facebook_url' => 'nullable|url|max:255',
+'instagram_url' => 'nullable|url|max:255',
+'tiktok_url' => 'nullable|url|max:255',
         ]);
 
         if ($validator->fails()) {

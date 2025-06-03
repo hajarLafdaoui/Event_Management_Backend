@@ -46,6 +46,14 @@ class User extends Authenticatable implements JWTSubject, MustVerifyEmail
         'is_active',
         'login_provider',
         'provider_id',
+            'gender',
+    'address',
+    'city',
+    'country',
+    'facebook_url',
+    'instagram_url',
+    'tiktok_url'
+
     ];
 
     protected $hidden = [
