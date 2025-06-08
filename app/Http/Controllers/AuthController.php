@@ -201,8 +201,18 @@ class AuthController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
-        $data = $request->only(['first_name', 'last_name', 'phone']);
-
+$data = $request->only([
+        'first_name',
+        'last_name',
+        'phone',
+        'gender',
+        'address',
+        'city',
+        'country',
+        'facebook_url',
+        'instagram_url',
+        'tiktok_url'
+    ]);
         // Handle profile picture removal
         if ($request->profile_picture === '') {
             // Clear the profile picture in the database
