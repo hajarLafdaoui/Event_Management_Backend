@@ -9,6 +9,9 @@ use Database\Seeders\VendorSeeder;
 use Database\Seeders\MessageSeeder;
 use Database\Seeders\EventTaskSeeder;
 use Database\Seeders\EventTypeSeeder;
+use Database\Seeders\GuestListSeeder;
+use Database\Seeders\SentEmailSeeder;
+use Database\Seeders\InvitationSeeder;
 use Database\Seeders\TaskTemplateSeeder;
 use Database\Seeders\VendorReviewSeeder;
 use Database\Seeders\EventTemplateSeeder;
@@ -45,6 +48,10 @@ class DatabaseSeeder extends Seeder
             VendorReviewSeeder::class,
             VendorPaymentSeeder::class,
             MessageSeeder::class,
+            EmailTemplateSeeder::class,
+            GuestListSeeder::class,
+            InvitationSeeder::class,
+            SentEmailSeeder::class,
 
         ]);
 

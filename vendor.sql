@@ -278,6 +278,7 @@ CREATE TABLE guest_lists (
 
 );
 --hajar
+
 CREATE TABLE invitations (
     invitation_id INT PRIMARY KEY AUTO_INCREMENT,
     event_id INT NOT NULL,
