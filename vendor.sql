@@ -355,7 +355,6 @@ CREATE TABLE event_gallery (
     FOREIGN KEY (event_id) REFERENCES events(event_id) ON DELETE CASCADE,
     FOREIGN KEY (uploader_id) REFERENCES users(user_id)
 );
-
 --ismail
 CREATE TABLE event_documents (
     document_id INT PRIMARY KEY AUTO_INCREMENT,

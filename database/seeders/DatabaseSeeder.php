@@ -12,8 +12,11 @@ use Database\Seeders\EventTypeSeeder;
 use Database\Seeders\GuestListSeeder;
 use Database\Seeders\SentEmailSeeder;
 use Database\Seeders\InvitationSeeder;
+use Database\Seeders\EventGallerySeeder;
 use Database\Seeders\TaskTemplateSeeder;
 use Database\Seeders\VendorReviewSeeder;
+use Database\Seeders\EventDocumentSeeder;
+use Database\Seeders\EventFeedbackSeeder;
 use Database\Seeders\EventTemplateSeeder;
 use Database\Seeders\VendorPaymentSeeder;
 use Database\Seeders\BookingRequestSeeder;
@@ -52,6 +55,9 @@ class DatabaseSeeder extends Seeder
             GuestListSeeder::class,
             InvitationSeeder::class,
             SentEmailSeeder::class,
+            EventDocumentSeeder::class,
+            EventGallerySeeder::class,
+            EventFeedbackSeeder::class,
 
         ]);
 
