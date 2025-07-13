@@ -5,10 +5,15 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Database\Seeders\UserSeeder;
 use Database\Seeders\EventSeeder;
+use Database\Seeders\VendorSeeder;
 use Database\Seeders\EventTaskSeeder;
 use Database\Seeders\EventTypeSeeder;
 use Database\Seeders\TaskTemplateSeeder;
 use Database\Seeders\EventTemplateSeeder;
+use Database\Seeders\VendorApprovalSeeder;
+use Database\Seeders\VendorPortfolioSeeder;
+use Database\Seeders\VendorAvailabilitySeeder;
+use Database\Seeders\VendorPricingPackageSeeder;
 
 class DatabaseSeeder extends Seeder
 {
@@ -25,6 +30,13 @@ class DatabaseSeeder extends Seeder
             EventSeeder::class,
             TaskTemplateSeeder::class,
             EventTaskSeeder::class,
+             VendorCategorySeeder::class,
+        VendorSeeder::class,
+        VendorServiceSeeder::class,
+        VendorPricingPackageSeeder::class,
+        VendorPortfolioSeeder::class,
+        VendorAvailabilitySeeder::class,
+        VendorApprovalSeeder::class,
 
         ]);
 
