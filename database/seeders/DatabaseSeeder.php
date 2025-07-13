@@ -6,10 +6,14 @@ use Illuminate\Database\Seeder;
 use Database\Seeders\UserSeeder;
 use Database\Seeders\EventSeeder;
 use Database\Seeders\VendorSeeder;
+use Database\Seeders\MessageSeeder;
 use Database\Seeders\EventTaskSeeder;
 use Database\Seeders\EventTypeSeeder;
 use Database\Seeders\TaskTemplateSeeder;
+use Database\Seeders\VendorReviewSeeder;
 use Database\Seeders\EventTemplateSeeder;
+use Database\Seeders\VendorPaymentSeeder;
+use Database\Seeders\BookingRequestSeeder;
 use Database\Seeders\VendorApprovalSeeder;
 use Database\Seeders\VendorPortfolioSeeder;
 use Database\Seeders\VendorAvailabilitySeeder;
@@ -30,13 +34,17 @@ class DatabaseSeeder extends Seeder
             EventSeeder::class,
             TaskTemplateSeeder::class,
             EventTaskSeeder::class,
-             VendorCategorySeeder::class,
-        VendorSeeder::class,
-        VendorServiceSeeder::class,
-        VendorPricingPackageSeeder::class,
-        VendorPortfolioSeeder::class,
-        VendorAvailabilitySeeder::class,
-        VendorApprovalSeeder::class,
+            VendorCategorySeeder::class,
+            VendorSeeder::class,
+            VendorServiceSeeder::class,
+            VendorPricingPackageSeeder::class,
+            VendorPortfolioSeeder::class,
+            VendorAvailabilitySeeder::class,
+            VendorApprovalSeeder::class,
+            BookingRequestSeeder::class,
+            VendorReviewSeeder::class,
+            VendorPaymentSeeder::class,
+            MessageSeeder::class,
 
         ]);
 
