@@ -81,7 +81,7 @@ Route::prefix('auth')->group(function () {    // Basic Authentication
 });
 
 
-// Vendor Categories
+// Vendor Categories  ADMIN
 Route::prefix('vendor-categories')->group(function () {
     Route::get('/', [VendorCategoryController::class, 'getVendorCategories']);
     Route::post('/', [VendorCategoryController::class, 'createVendorCategory']);
@@ -136,11 +136,12 @@ Route::prefix('vendors/{vendor}/availabilities')->group(function () {
     Route::delete('/{availability}', [VendorAvailabilityController::class, 'destroy']);
 });
 
-// Vendor Approval Routes
+// Vendor Approval Routes  ADMIN
 
 Route::prefix('vendor-approvals')->middleware(['auth:api', 'role:admin'])->group(function () {
-    Route::get('/', [VendorApprovalController::class, 'index']);
+     Route::get('/', [VendorApprovalController::class, 'index']);
     Route::get('/pending', [VendorApprovalController::class, 'pending']);
+    Route::get('/stats', [VendorApprovalController::class, 'stats']); // Add this
     Route::get('/vendor/{vendor}', [VendorApprovalController::class, 'show']);
     Route::post('/vendor/{vendor}', [VendorApprovalController::class, 'store']);
 });

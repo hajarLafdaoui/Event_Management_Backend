@@ -129,4 +129,17 @@ class VendorApprovalController extends Controller
             'message' => 'Vendor has been ' . $request->action
         ]);
     }
+    // In VendorApprovalController.php
+public function stats()
+{
+    $pending = Vendor::where('status', 'pending')->count();
+    $approved = Vendor::where('status', 'approved')->count();
+    $rejected = Vendor::where('status', 'rejected')->count();
+
+    return response()->json([
+        'pending' => $pending,
+        'approved' => $approved,
+        'rejected' => $rejected
+    ]);
+}
 }
