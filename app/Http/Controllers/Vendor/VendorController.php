@@ -71,22 +71,30 @@ class VendorController extends Controller
     /**
      * Get single vendor
      */
-    public function getVendor($id)
-    {
-        $vendor = Vendor::with(['category', 'user', 'portfolios', 'services'])->find($id);
-
-        if (!$vendor) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Vendor not found'
-            ], 404);
-        }
-
-        return response()->json([
-            'success' => true,
-            'data' => $vendor
-        ]);
+  // In getVendor($id) method
+public function getVendor($id)
+{
+    $vendor = Vendor::with(['category', 'user']);
+    
+    if(request()->has('with')) {
+        $relationships = explode(',', request()->input('with'));
+        $vendor->with($relationships);
     }
+    
+    $vendor = $vendor->find($id);
+    
+    if (!$vendor) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Vendor not found'
+        ], 404);
+    }
+
+    return response()->json([
+        'success' => true,
+        'data' => $vendor
+    ]);
+}
 
     /**
      * Update vendor

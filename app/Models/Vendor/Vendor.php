@@ -3,12 +3,13 @@
 namespace App\Models\Vendor;
 
 use App\Models\User;
-use App\Models\Vendor\VendorApproval;
-use App\Models\BookingRequest;
-use App\Models\VendorPayment;
-use App\Models\Vendor\VendorCategory;
 use App\Models\VendorReview;
+use App\Models\VendorPayment;
+use App\Models\BookingRequest;
+use App\Models\Vendor\VendorApproval;
+use App\Models\Vendor\VendorCategory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Vendor\VendorAvailability;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Vendor extends Model
@@ -53,10 +54,11 @@ class Vendor extends Model
         return $this->hasMany(VendorService::class);
     }
 
+  
     public function availabilities()
-    {
-        return $this->hasMany(VendorAvailability::class);
-    }
+{
+    return $this->hasMany(VendorAvailability::class);
+}
 
 
    public function approvals()
