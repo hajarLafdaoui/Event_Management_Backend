@@ -13,23 +13,29 @@ class VendorController extends Controller
     /**
      * Get all vendors with pagination
      */
-    public function getVendors(Request $request)
-    {
-        $perPage = $request->query('per_page', 10);
-        $vendors = Vendor::with(['category', 'user'])
-                    ->orderBy('business_name')
-                    ->paginate($perPage);
+  public function getVendors(Request $request)
+{
+    $perPage = $request->query('per_page', 10);
+    
+    $vendors = Vendor::with([
+            'category', 
+            'user' => function($query) {
+                $query->select('id', 'first_name', 'last_name', 'email');
+            }
+        ])
+        ->orderBy('business_name')
+        ->paginate($perPage);
 
-        return response()->json([
-            'success' => true,
-            'data' => $vendors->items(),
-            'meta' => [
-                'total' => $vendors->total(),
-                'per_page' => $vendors->perPage(),
-                'current_page' => $vendors->currentPage(),
-            ]
-        ]);
-    }
+    return response()->json([
+        'success' => true,
+        'data' => $vendors->items(),
+        'meta' => [
+            'total' => $vendors->total(),
+            'per_page' => $vendors->perPage(),
+            'current_page' => $vendors->currentPage(),
+        ]
+    ]);
+}
 
     /**
      * Create new vendor
@@ -67,35 +73,23 @@ class VendorController extends Controller
             'message' => 'Vendor created successfully'
         ], 201);
     }
-
-    /**
-     * Get single vendor
-     */
-  // In getVendor($id) method
 public function getVendor($id)
 {
-    $vendor = Vendor::with(['category', 'user']);
+    $relations = ['category', 'user'];
     
     if(request()->has('with')) {
-        $relationships = explode(',', request()->input('with'));
-        $vendor->with($relationships);
+        $additionalRelations = explode(',', request()->input('with'));
+        $relations = array_merge($relations, $additionalRelations);
     }
     
-    $vendor = $vendor->find($id);
+    $vendor = Vendor::with($relations)->find($id);
     
-    if (!$vendor) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Vendor not found'
-        ], 404);
-    }
-
+    // Return user data directly, not wrapped in 'data'
     return response()->json([
         'success' => true,
         'data' => $vendor
     ]);
 }
-
     /**
      * Update vendor
      */

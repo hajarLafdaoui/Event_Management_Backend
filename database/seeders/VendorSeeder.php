@@ -5,15 +5,15 @@ namespace Database\Seeders;
 use App\Models\User;
 use App\Models\Vendor\Vendor;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 use App\Models\Vendor\VendorCategory;
 
 class VendorSeeder extends Seeder
 {
     public function run()
     {
-        $vendorUsers = User::where('role', 'vendor')->get();
         $categories = VendorCategory::all();
-
+        
         $vendors = [
             [
                 'business_name' => 'Gourmet Catering Co',
@@ -63,13 +63,26 @@ class VendorSeeder extends Seeder
             ],
         ];
 
-        foreach ($vendors as $index => $vendorData) {
-            // Ensure we have enough users and categories
-            $user = $vendorUsers[$index] ?? $vendorUsers[0];
-            $category = $categories[$index] ?? $categories[0];
+        // Create vendor users first
+        $vendorUsers = [];
+        for ($i = 1; $i <= count($vendors); $i++) {
+            $vendorUsers[] = User::create([
+                'first_name' => 'Vendor',
+                'last_name' => 'Business ' . $i,
+                'email' => 'vendor' . $i . '@example.com',
+                'password' => Hash::make('password'),
+                'role' => 'vendor',
+                'is_email_verified' => true,
+                'is_active' => true,
+            ]);
+        }
 
+        // Now create vendors
+        foreach ($vendors as $index => $vendorData) {
+            $category = $categories[$index] ?? $categories[0];
+            
             Vendor::create([
-                'user_id' => $user->id,
+                'user_id' => $vendorUsers[$index]->id,
                 'vendor_category_id' => $category->id,
                 'business_name' => $vendorData['business_name'],
                 'description' => $vendorData['description'],
