@@ -23,6 +23,19 @@ class EventTemplateController extends Controller
             'template_name' => 'required|string|max:255',
             'template_description' => 'nullable|string',
             'default_budget' => 'nullable|numeric',
+            'default_event_name' => 'nullable|string|max:255',
+            'default_event_description' => 'nullable|string',
+            'default_start_datetime' => 'nullable|date',
+            'default_end_datetime' => 'nullable|date|after:default_start_datetime',
+            'default_location' => 'nullable|string|max:255',
+            'default_venue_name' => 'nullable|string|max:255',
+            'default_address' => 'nullable|string|max:255',
+            'default_city' => 'nullable|string|max:255',
+            'default_state' => 'nullable|string|max:255',
+            'default_country' => 'nullable|string|max:255',
+            'default_postal_code' => 'nullable|string|max:20',
+            'default_theme' => 'nullable|string|max:255',
+            'default_notes' => 'nullable|string',
             'is_system_template' => 'boolean'
         ]);
 
@@ -45,6 +58,19 @@ class EventTemplateController extends Controller
             'template_name' => 'required|string|max:255',
             'template_description' => 'nullable|string',
             'default_budget' => 'nullable|numeric',
+            'default_event_name' => 'nullable|string|max:255',
+            'default_event_description' => 'nullable|string',
+            'default_start_datetime' => 'nullable|date',
+            'default_end_datetime' => 'nullable|date|after:default_start_datetime',
+            'default_location' => 'nullable|string|max:255',
+            'default_venue_name' => 'nullable|string|max:255',
+            'default_address' => 'nullable|string|max:255',
+            'default_city' => 'nullable|string|max:255',
+            'default_state' => 'nullable|string|max:255',
+            'default_country' => 'nullable|string|max:255',
+            'default_postal_code' => 'nullable|string|max:20',
+            'default_theme' => 'nullable|string|max:255',
+            'default_notes' => 'nullable|string',
             'is_system_template' => 'boolean'
         ]);
 
@@ -56,7 +82,7 @@ class EventTemplateController extends Controller
     public function destroy(EventTemplate $template)
     {
         $template->delete();
-       return response()->json(['message' => 'Event template deleted successfully.'], 200);
+        return response()->json(['message' => 'Event template deleted successfully.'], 200);
     }
 
     public function generateWithAI(Request $request)
@@ -67,10 +93,10 @@ class EventTemplateController extends Controller
         ]);
 
         $eventType = EventType::findOrFail($request->event_type_id);
-        
+
         // Generate with OpenAI
         $prompt = $request->prompt ?? "Create a comprehensive event template for {$eventType->type_name} including suggested budget, activities, and timeline.";
-        
+
         $response = OpenAI::chat()->create([
             'model' => 'gpt-3.5-turbo',
             'messages' => [
@@ -80,7 +106,7 @@ class EventTemplateController extends Controller
         ]);
 
         $aiContent = $response->choices[0]->message->content;
-        
+
         // Parse AI response (this would be more sophisticated in production)
         $budget = $this->extractBudgetFromAIResponse($aiContent);
 
@@ -91,6 +117,7 @@ class EventTemplateController extends Controller
             'default_budget' => $budget,
             'created_by_admin_id' => Auth::id(),
             'is_system_template' => true
+            // Optionally, parse and fill other default fields from AI if needed
         ]);
 
         return response()->json($template, 201);

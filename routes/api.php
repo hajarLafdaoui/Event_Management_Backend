@@ -94,10 +94,12 @@ Route::prefix('vendor-categories')->group(function () {
 Route::prefix('vendors')->group(function () {
     Route::get('/', [VendorController::class, 'getVendors']);
     Route::post('/', [VendorController::class, 'createVendor']);
+    Route::put('/{id}/status', [VendorController::class, 'updateStatus']);
+
     Route::get('/{id}', [VendorController::class, 'getVendor']);
     Route::put('/{id}', [VendorController::class, 'updateVendor']);
     Route::delete('/{id}', [VendorController::class, 'deleteVendor']);
-    
+
 });
 
 // Vendor Portfolio Routes
@@ -116,7 +118,7 @@ Route::prefix('vendors/{vendor}/services')->group(function () {
     Route::get('/{service}', [VendorServiceController::class, 'getVendorService']);
     Route::put('/{service}', [VendorServiceController::class, 'updateVendorService']);
     Route::delete('/{service}', [VendorServiceController::class, 'deleteVendorService']);
-    
+
     // Pricing Packages Routes
     Route::prefix('/{service}/packages')->group(function () {
         Route::get('/', [VendorPricingPackageController::class, 'getPricingPackages']);
@@ -139,7 +141,7 @@ Route::prefix('vendors/{vendor}/availabilities')->group(function () {
 // Vendor Approval Routes  ADMIN
 
 Route::prefix('vendor-approvals')->middleware(['auth:api', 'role:admin'])->group(function () {
-     Route::get('/', [VendorApprovalController::class, 'index']);
+    Route::get('/', [VendorApprovalController::class, 'index']);
     Route::get('/pending', [VendorApprovalController::class, 'pending']);
     Route::get('/stats', [VendorApprovalController::class, 'stats']); // Add this
     Route::get('/vendor/{vendor}', [VendorApprovalController::class, 'show']);
@@ -268,7 +270,7 @@ Route::prefix('events/{event}/gallery')->middleware('auth:api')->group(function 
 
 // Event Documents Routes
 Route::prefix('event-documents')->middleware('auth:api')->group(function () {
-    
+
     Route::get('/', [EventDocumentController::class, 'index']);// Get all event documents
     Route::post('/', [EventDocumentController::class, 'store']);// Create a new event document
     Route::get('/{id}', [EventDocumentController::class, 'show']);// Get a specific event document by ID
@@ -276,7 +278,7 @@ Route::prefix('event-documents')->middleware('auth:api')->group(function () {
     Route::delete('/{id}', [EventDocumentController::class, 'destroy']);// Delete a specific event document by ID
 });
 
- 
+
 // Guest management routes
 Route::prefix('events/{eventId}/guests')->group(function () {
     Route::get('/', [GuestListController::class, 'index']);

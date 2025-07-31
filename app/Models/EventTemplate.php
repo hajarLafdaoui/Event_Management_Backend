@@ -18,6 +18,19 @@ class EventTemplate extends Model
         'template_name',
         'template_description',
         'default_budget',
+        'default_event_name',
+        'default_event_description',
+        'default_start_datetime',
+        'default_end_datetime',
+        'default_location',
+        'default_venue_name',
+        'default_address',
+        'default_city',
+        'default_state',
+        'default_country',
+        'default_postal_code',
+        'default_theme',
+        'default_notes',
         'created_by_admin_id',
         'is_system_template'
     ];
@@ -29,7 +42,7 @@ class EventTemplate extends Model
 
     public function eventType()
     {
-        return $this->belongsTo(EventType::class, 'event_type_id');
+        return $this->belongsTo(EventType::class, 'event_type_id', 'event_type_id');
     }
 
     public function admin()
